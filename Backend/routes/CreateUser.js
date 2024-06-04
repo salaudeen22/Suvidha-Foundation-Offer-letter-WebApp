@@ -7,7 +7,7 @@ const jwt = require("jsonwebtoken");
 const jwtsecret =  "suvidhafoundation";
 
 
-
+// http://localhost:4000/api/createuser
 router.post(
     "/createuser",
    [
@@ -59,6 +59,8 @@ router.post(
   );
 
 
+
+  // http://localhost:4000/api/loginuser
   router.post(
     "/loginuser",
     [
