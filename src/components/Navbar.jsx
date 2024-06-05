@@ -1,10 +1,19 @@
-import React from "react";
+import React, { useContext } from "react";
+import SideBarContext from "../ContextProvider/SidebarContext";
 
 function Navbar() {
+  const { sidebar, setsidebar } = useContext(SideBarContext);
+
+  const handleClick = (e) => {
+    e.preventDefault();
+    setsidebar(!sidebar);
+    console.log(sidebar);
+  };
+
   return (
     <div className="navbar">
       <div className="navbar-state">
-        <button className="close-btn">x</button>
+        <button className="close-btn" onClick={handleClick}>x</button>
         <h3 className="welcome-message">Welcome, username</h3>
       </div>
 

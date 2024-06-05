@@ -5,19 +5,20 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import './App.css';
 import Home from './screen/Home';
 import OfferletterManagement from './screen/OfferletterManagement';
+import SideBarContextProvider from './ContextProvider/SidebarContextProvider';
 
 function App() {
   return (
     <Router>
       <div className='Main'>
-       
-        <Sidebar />
-        <Home/>
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/OfferletterManagement" element={<OfferletterManagement />} />
-         
-        </Routes>
+        <SideBarContextProvider>
+          <Sidebar />
+
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/OfferletterManagement" element={<OfferletterManagement />} />
+          </Routes>
+        </SideBarContextProvider>
       </div>
     </Router>
   );

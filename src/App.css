@@ -11,6 +11,7 @@
 }
 /* -------Sidebar ------------- */
 /* General Sidebar Styles */
+
 .sidebar {
   position: absolute;
   width: 250px;
@@ -20,7 +21,19 @@
   flex-direction: column;
   height: 100vh;
   padding: 20px;
+  transition: transform 0.3s ease;
 }
+
+/* Hide the sidebar */
+.sidebar.hidden {
+  transform: translateX(-100%);
+}
+
+/* Show the sidebar */
+.sidebar.visible {
+  transform: translateX(0);
+}
+
 .sidebar a,Link
 {
   color: inherit;
@@ -150,16 +163,20 @@ ul.menu, ul.submenu {
 }
 
 
-.Home
-{
+.Home {
   position: absolute;
-  margin-left: 250px;
   height: 100vh;
-  width: 80%;
+  width: calc(100% - 250px); 
+  margin-left: 250px; 
   background-color: rgb(199, 199, 199);
-  width: calc(100%-20%);
-
+  transition: margin-left 0.3s ease, width 0.3s ease; 
 }
+
+.Home.sidebar-hidden {
+  width: 100%; 
+  margin-left: 0; 
+}
+
 
 /* Responsive Styles */
 /* @media (max-width: 768px) {
