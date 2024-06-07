@@ -1,7 +1,6 @@
 import React, { useContext, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link } from 'react-router-dom';
 import SideBarContext from "../ContextProvider/SidebarContext";
-import { IoIosArrowDown, IoIosArrowUp } from "react-icons/io";
 
 function Sidebar() {
   const { sidebar } = useContext(SideBarContext);
@@ -20,11 +19,9 @@ function Sidebar() {
   };
 
   return (
-    <div className={`sidebar ${sidebar ? "visible" : "hidden"}`}>
+    <div className={`sidebar ${sidebar ? 'visible' : 'hidden'}`}>
       <div className="logo">
-        <Link to="/">
-          <h2>Suvidha Foundation</h2>
-        </Link>
+        <h2>Suvidha Foundation</h2>
         <hr />
       </div>
 
@@ -37,7 +34,9 @@ function Sidebar() {
             onClick={() => toggleSection("offerLetterManagement")}
             className={openSections.offerLetterManagement ? "active" : ""}
           >
-            <div id="liheader">Offer Letter Management</div>
+            <div id="liheader">
+              Offer Letter Management
+            </div>
           </li>
         </Link>
         <li
@@ -47,11 +46,7 @@ function Sidebar() {
           <div id="liheader">
             Template Management
             <span className="icon">
-              {openSections.templateManagement ? (
-                <IoIosArrowDown className="text-sm" />
-              ) : (
-                <IoIosArrowUp className="text-sm" />
-              )}
+              {openSections.templateManagement ? "^" : "^"}
             </span>
           </div>
           {openSections.templateManagement && (
@@ -66,14 +61,10 @@ function Sidebar() {
           onClick={() => toggleSection("reportsAndAnalytics")}
           className={openSections.reportsAndAnalytics ? "active" : ""}
         >
-          <div id="liheader" className="flex items-center">
+          <div id="liheader">
             Reports and Analytics
             <span className="icon">
-              {openSections.reportsAndAnalytics ? (
-                <IoIosArrowDown className="text-sm" />
-              ) : (
-                <IoIosArrowUp className="text-sm" />
-              )}
+              {openSections.reportsAndAnalytics ? "^" : "^"}
             </span>
           </div>
           {openSections.reportsAndAnalytics && (
