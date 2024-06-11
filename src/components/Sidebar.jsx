@@ -26,10 +26,10 @@ function Sidebar() {
       </div>
 
       <ul className="menu">
-        <Link to="/">
+        <Link to="/home">
           <li>Dashboard</li>
         </Link>
-        <Link to="/OfferletterManagement">
+        <Link to="/offer-letter-management">
           <li
             onClick={() => toggleSection("offerLetterManagement")}
             className={openSections.offerLetterManagement ? "active" : ""}
