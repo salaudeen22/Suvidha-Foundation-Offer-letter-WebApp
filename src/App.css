@@ -1,12 +1,10 @@
-*
-{
+* {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
 }
 
-.Main
-{
+.Main {
   position: relative;
 }
 /* -------Sidebar ------------- */
@@ -19,7 +17,8 @@
   color: #ecf0f1;
   display: flex;
   flex-direction: column;
-  height: 100vh;
+
+  height: 150vh;
   padding: 20px;
   transition: transform 0.3s ease;
 }
@@ -34,8 +33,8 @@
   transform: translateX(0);
 }
 
-.sidebar a,Link
-{
+.sidebar a,
+Link {
   color: inherit;
   text-decoration: none;
 }
@@ -106,17 +105,13 @@
   transform: rotate(0deg);
 }
 
-ul.menu, ul.submenu {
+ul.menu,
+ul.submenu {
   margin-top: 10px;
 }
 /* Sidebar End */
 
-
-
-
-
 /* Navbar start */
-
 
 /* General Navbar Styles */
 .navbar {
@@ -162,31 +157,28 @@ ul.menu, ul.submenu {
   border-radius: 50%;
 }
 
-
 .Home {
   position: absolute;
   height: 100vh;
-  width: calc(100% - 250px); 
-  margin-left: 250px; 
-  
+  width: calc(100% - 250px);
+  margin-left: 250px;
+
   background-color: rgb(244, 243, 243);
-  transition: margin-left 0.3s ease, width 0.3s ease; 
+  transition: margin-left 0.3s ease, width 0.3s ease;
 }
 
 .Home.sidebar-hidden {
-  width: 100%; 
-  margin-left: 0; 
+  width: 100%;
+  margin-left: 0;
 }
 
 /* main Content */
 
-.main-content
-{
+.main-content {
   margin: 20px;
 }
-.top
-{
- display: flex;
+.top {
+  display: flex;
 }
 .TotalBox {
   font-family: Arial, sans-serif;
@@ -226,19 +218,18 @@ hr {
 .middle {
   display: flex;
   width: 100%;
- gap: 20px;
+  gap: 20px;
   padding: 20px;
   background-color: #f5f5f5;
 }
 
 /* Styling for midleft and midright cards */
 .card {
-
   background-color: white;
   border-radius: 8px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   padding: 20px;
-  
+
   margin: 10px;
 }
 
@@ -253,35 +244,41 @@ hr {
 }
 /* Right and Left card Styling End */
 
-
-
 /* Table styles */
-.offer-table, .pending-table {
+.offer-table,
+.pending-table {
   width: 100%;
   border-collapse: collapse;
   margin-top: 20px;
 }
 
-.offer-table th, .offer-table td, .pending-table th, .pending-table td {
+.offer-table th,
+.offer-table td,
+.pending-table th,
+.pending-table td {
   border: 1px solid #ddd;
   padding: 8px;
   text-align: left;
 }
 
-.offer-table th, .pending-table th {
+.offer-table th,
+.pending-table th {
   background-color: #2c3e50;
   color: #ecf0f1;
 }
 
-.offer-table tr:nth-child(even), .pending-table tr:nth-child(even) {
+.offer-table tr:nth-child(even),
+.pending-table tr:nth-child(even) {
   background-color: #f2f2f2;
 }
 
-.offer-table tr:hover, .pending-table tr:hover {
+.offer-table tr:hover,
+.pending-table tr:hover {
   background-color: #ddd;
 }
 
-.offer-table th, .pending-table th {
+.offer-table th,
+.pending-table th {
   padding-top: 12px;
   padding-bottom: 12px;
   text-align: left;
@@ -299,14 +296,14 @@ hr {
   color: #34495e;
 }
 
-
 .pending-table {
   border: 2px solid #2c3e50;
   border-radius: 8px;
   overflow: hidden;
 }
 
-.pending-table th, .pending-table td {
+.pending-table th,
+.pending-table td {
   border: none;
   border-bottom: 1px solid #ddd;
 }
@@ -316,55 +313,144 @@ hr {
 }
 /* Table Styling ends */
 
-
-
-
 /* Main Content End */
 
+/* OFFER LETTER MANGEMENT */
+
+.content {
+  padding: 10px;
+  background-color: #f8f9fa;
+}
+
+/* Control section styling */
+.controls {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.controls input,
+.controls button {
+  padding: 10px;
+  border: 1px solid #dee2e6;
+  border-radius: 4px;
+  font-size: 16px;
+}
+
+.controls input:focus,
+.controls button:focus {
+  outline: none;
+  border-color: #343a40;
+}
+
+.controls button {
+  background-color: #343a40;
+  color: #ffffff;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.controls button:hover {
+  background-color: #495057;
+}
+
+/* Table styling */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: #ffffff;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+table th,
+table td {
+  padding: 12px;
+  border: 1px solid #dee2e6;
+  text-align: left;
+}
+
+table th {
+  background-color: #343a40;
+  color: #ffffff;
+}
+
+table tbody tr:nth-child(even) {
+  background-color: #f2f2f2;
+}
+
+table tbody tr:hover {
+  background-color: #e9ecef;
+}
+
+table th,
+table td {
+  padding-top: 12px;
+  padding-bottom: 12px;
+  text-align: left;
+  border-bottom: 1px solid #dee2e6;
+}
+
+table th {
+  border-bottom: 2px solid #343a40;
+}
+
+table td a {
+  color: #343a40;
+  text-decoration: none;
+}
+
+table td a:hover {
+  text-decoration: underline;
+  color: #495057;
+}
+
+/* Section heading styling */
+.recent-offers h2 {
+  margin-bottom: 20px;
+  font-size: 24px;
+  color: #343a40;
+}
+
+/* OFFER LETTER MANGEMENT  ENDS*/
 
 @media (max-width: 768px) {
   .welcome-message {
     display: none;
     margin: 0;
-}
-.top {
-  display: flex;
-  flex-direction: column;
-}
+  }
+  .top {
+    display: flex;
+    flex-direction: column;
+  }
 
-.TotalBox {
-  font-family: Arial, sans-serif;
-  width: 100%;
-  border: 2px solid #ccc;
-  border-radius: 5px;
-  padding: 20px;
-  /* width: 20vw; */
-  margin-top: 20px;
-  /* margin: 0 auto; */
-  box-shadow: "1px 6px 20px 0px rgba(0, 0, 0, 0.15)";
+  .TotalBox {
+    font-family: Arial, sans-serif;
+    width: 100%;
+    border: 2px solid #ccc;
+    border-radius: 5px;
+    padding: 20px;
+    /* width: 20vw; */
+    margin-top: 20px;
+    /* margin: 0 auto; */
+    box-shadow: "1px 6px 20px 0px rgba(0, 0, 0, 0.15)";
+  }
+  .middle {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    gap: 10px;
+    padding: 10px;
+    /* background-color: #f5f5f5; */
+  }
+
+  .midright {
+    width: 100%;
+    margin-left: 10px;
+  }
+  .pending-table {
+    border: 2px solid #2c3e50;
+    border-radius: 8px;
+    width: 100%;
+    overflow: hidden;
+  }
 }
-.middle {
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-  gap: 20px;
-  padding: 20px;
-  /* background-color: #f5f5f5; */
-}
-
-.midright {
-  width: 100%;
-  margin-left: 10px;
-}
-.pending-table {
-  border: 2px solid #2c3e50;
-  border-radius: 8px;
-  width: 100%;
-  overflow: hidden;
-}
-
-}
-
-
-
-
