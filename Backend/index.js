@@ -32,6 +32,12 @@ app.use((req, res, next) => {
 app.use(express.json());
 
 app.use("/api", require("./routes/CreateUser"));
+app.use("/api", require("./routes/OfferletterMangement"));
+
+app.use((err, req, res, next) => {
+  console.error(err.stack);
+  res.status(500).send('Something broke!');
+});
 
 app.listen(port, () => {
   console.log(`app listening on port ${port}`);

@@ -18,11 +18,7 @@ const userSchema=new Schema({
         enum: ['hr', 'admin'],
         required:true
     },
-    userImage:
-    {
-        type:String,
-    },
-    password: {
+   password: {
         type: String,
         required: true
     },
