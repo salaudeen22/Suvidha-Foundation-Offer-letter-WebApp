@@ -33,6 +33,7 @@ app.use(express.json());
 
 app.use("/api", require("./routes/CreateUser"));
 app.use("/api", require("./routes/OfferletterMangement"));
+app.use("/api", require("./routes/Display"));
 
 app.use((err, req, res, next) => {
   console.error(err.stack);

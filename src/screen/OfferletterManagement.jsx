@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import Navbar from "../components/Navbar";
 import SideBarContext from "../ContextProvider/SidebarContext";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -95,23 +95,15 @@ const dummyOfferLetters = [
 ];
 
 function OfferletterManagement() {
+  function formatDate(dateString) {
+    const options = { day: "numeric", month: "long" };
+    return new Date(dateString).toLocaleDateString("en-US", options);
+  }
   const { sidebar } = useContext(SideBarContext);
   const [numLetters, setNumLetters] = useState(10);
   const [searchTerm, setSearchTerm] = useState("");
   const [recentLetters, setRecentLetters] = useState(dummyOfferLetters);
   const [showform, setshowform] = useState(false);
-  const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    designation: "",
-    from: "",
-    to: "",
-    uid: "",
-    paid: "unpaid", // Default value for "paid"
-  });
-  const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
 
   const handleNumLettersChange = (e) => {
     setNumLetters(e.target.value);
@@ -122,14 +114,30 @@ function OfferletterManagement() {
   };
 
   const handleGenerate = (uid) => {
-    // Logic to generate file for the offer letter with the given UID
+   
   };
 
   const handleView = (uid) => {
-    // Logic to view the file for the offer letter with the given UID
+   
   };
 
-  const handleSubmit = async (e) => {};
+  const fetchData = async () => {
+    try {
+      const response = await fetch("http://localhost:4000/api/offerLetters");
+      if (!response.ok) {
+        throw new Error("Network response was not ok");
+      }
+      const data = await response.json();
+      setRecentLetters(data.data);
+    } catch (error) {
+      console.error("Error fetching offer letters:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+  
 
   const handleSendMail = (uid) => {
     Swal.fire({
@@ -200,7 +208,7 @@ function OfferletterManagement() {
           <table>
             <thead>
               <tr>
-                <th>Sl No</th>
+               
                 <th>Name</th>
                 <th>Designation</th>
                 <th>From</th>
@@ -214,11 +222,11 @@ function OfferletterManagement() {
             <tbody>
               {filteredLetters.map((letter) => (
                 <tr key={letter.uid}>
-                  <td>{letter.slNo}</td>
+                
                   <td>{letter.name}</td>
                   <td>{letter.designation}</td>
-                  <td>{letter.from}</td>
-                  <td>{letter.to}</td>
+                  <td>{formatDate(letter.from)}</td>
+                  <td>{formatDate(letter.to)}</td>
                   <td>{letter.uid}</td>
                   <td onClick={() => handleGenerate(letter.uid)}>
                     <FontAwesomeIcon icon={faDownload} />
