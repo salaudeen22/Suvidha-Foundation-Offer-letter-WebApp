@@ -2,8 +2,14 @@ import React, { useContext, useState } from "react";
 import Navbar from "../components/Navbar";
 import SideBarContext from "../ContextProvider/SidebarContext";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faDownload, faEye, faEnvelope } from "@fortawesome/free-solid-svg-icons";
-import Swal from 'sweetalert2'
+import {
+  faDownload,
+  faEye,
+  faEnvelope,
+} from "@fortawesome/free-solid-svg-icons";
+import Swal from "sweetalert2";
+import FormOverlay from "../components/FormOverlay";
+
 
 const dummyOfferLetters = [
   {
@@ -93,6 +99,19 @@ function OfferletterManagement() {
   const [numLetters, setNumLetters] = useState(10);
   const [searchTerm, setSearchTerm] = useState("");
   const [recentLetters, setRecentLetters] = useState(dummyOfferLetters);
+  const [showform, setshowform] = useState(false);
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    designation: "",
+    from: "",
+    to: "",
+    uid: "",
+    paid: "unpaid", // Default value for "paid"
+  });
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
 
   const handleNumLettersChange = (e) => {
     setNumLetters(e.target.value);
@@ -110,6 +129,8 @@ function OfferletterManagement() {
     // Logic to view the file for the offer letter with the given UID
   };
 
+  const handleSubmit = async (e) => {};
+
   const handleSendMail = (uid) => {
     Swal.fire({
       title: "Are you sure?",
@@ -118,13 +139,13 @@ function OfferletterManagement() {
       showCancelButton: true,
       confirmButtonColor: "#3085d6",
       cancelButtonColor: "#d33",
-      confirmButtonText: "Yes, send it!"
+      confirmButtonText: "Yes, send it!",
     }).then((result) => {
       if (result.isConfirmed) {
         Swal.fire({
           title: "SendMail!",
           text: "Your file has been sent.",
-          icon: "success"
+          icon: "success",
         });
       }
     });
@@ -155,10 +176,24 @@ function OfferletterManagement() {
             onChange={handleSearchChange}
             placeholder="Search offer letters"
           />
-          <button onClick={() => {/* Handle create new offer letter logic */}}>
+          <button
+            onClick={() => {
+              showform ? setshowform(false) : setshowform(true);
+            }}
+          >
             Create New Offer Letter
           </button>
         </div>
+        {showform && (
+           <div className="overlay">
+           <span className="close" onClick={()=>
+             {
+               setshowform(false);
+             }
+           }>&times;</span>
+           <FormOverlay/>
+         </div>
+        )}
 
         <div className="recent-offers">
           <h2>Top 10 Recent Offer Letters</h2>
