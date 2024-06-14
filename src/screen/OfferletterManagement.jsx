@@ -9,101 +9,19 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import Swal from "sweetalert2";
 import FormOverlay from "../components/FormOverlay";
+import { pdfjs } from "react-pdf"; // Import react-pdf
 
-
-const dummyOfferLetters = [
-  {
-    slNo: 1,
-    name: "John Doe",
-    designation: "Software Engineer",
-    from: "2024-01-01",
-    to: "2024-12-31",
-    uid: "UID001",
-  },
-  {
-    slNo: 2,
-    name: "Jane Smith",
-    designation: "Product Manager",
-    from: "2024-02-01",
-    to: "2024-12-31",
-    uid: "UID002",
-  },
-  {
-    slNo: 3,
-    name: "Alice Johnson",
-    designation: "UX Designer",
-    from: "2024-03-01",
-    to: "2024-12-31",
-    uid: "UID003",
-  },
-  {
-    slNo: 4,
-    name: "Bob Brown",
-    designation: "DevOps Engineer",
-    from: "2024-04-01",
-    to: "2024-12-31",
-    uid: "UID004",
-  },
-  {
-    slNo: 5,
-    name: "Charlie Green",
-    designation: "Data Scientist",
-    from: "2024-05-01",
-    to: "2024-12-31",
-    uid: "UID005",
-  },
-  {
-    slNo: 6,
-    name: "Diana White",
-    designation: "HR Manager",
-    from: "2024-06-01",
-    to: "2024-12-31",
-    uid: "UID006",
-  },
-  {
-    slNo: 7,
-    name: "Evan Black",
-    designation: "Marketing Specialist",
-    from: "2024-07-01",
-    to: "2024-12-31",
-    uid: "UID007",
-  },
-  {
-    slNo: 8,
-    name: "Fiona Blue",
-    designation: "Sales Executive",
-    from: "2024-08-01",
-    to: "2024-12-31",
-    uid: "UID008",
-  },
-  {
-    slNo: 9,
-    name: "George Yellow",
-    designation: "Financial Analyst",
-    from: "2024-09-01",
-    to: "2024-12-31",
-    uid: "UID009",
-  },
-  {
-    slNo: 10,
-    name: "Hannah Red",
-    designation: "Legal Advisor",
-    from: "2024-10-01",
-    to: "2024-12-31",
-    uid: "UID010",
-  },
-];
+pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.min.js`;
 
 function OfferletterManagement() {
-  function formatDate(dateString) {
-    const options = { day: "numeric", month: "long" };
-    return new Date(dateString).toLocaleDateString("en-US", options);
-  }
+  // Your existing code
   const { sidebar } = useContext(SideBarContext);
   const [numLetters, setNumLetters] = useState(10);
   const [searchTerm, setSearchTerm] = useState("");
-  const [recentLetters, setRecentLetters] = useState(dummyOfferLetters);
-  const [showform, setshowform] = useState(false);
+  const [recentLetters, setRecentLetters] = useState([]);
+  const [showForm, setShowForm] = useState(false);
+  const [pdfUrl, setPdfUrl] = useState("");
+  const [showPdfViewer, setShowPdfViewer] = useState(false);
 
   const handleNumLettersChange = (e) => {
     setNumLetters(e.target.value);
@@ -113,12 +31,64 @@ function OfferletterManagement() {
     setSearchTerm(e.target.value);
   };
 
-  const handleGenerate = (uid) => {
-   
+  function formatDate(dateString) {
+    const options = { day: "numeric", month: "long" };
+    return new Date(dateString).toLocaleDateString("en-US", options);
+  }
+
+  const handleGenerate = async (refNo) => {
+    try {
+      const response = await fetch(
+        `http://localhost:4000/api/generate/${refNo}`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || "Failed to generate offer letter");
+      }
+
+      const pdfBlob = await response.blob();
+      const pdfUrl = URL.createObjectURL(pdfBlob);
+
+      const link = document.createElement("a");
+      link.href = pdfUrl;
+      link.download = "OfferLetter.pdf";
+      document.body.appendChild(link);
+
+      link.click();
+
+      document.body.removeChild(link);
+      URL.revokeObjectURL(pdfUrl);
+    } catch (error) {
+      console.error("Error generating offer letter:", error.message);
+    }
   };
 
-  const handleView = (uid) => {
-   
+  const handleView = async (refNo) => {
+    try {
+      const response = await fetch(`http://localhost:4000/api/view/${refNo}`);
+      if (!response.ok) {
+        throw new Error(`Failed to fetch PDF for UID: ${refNo}`);
+      }
+      const pdfBlob = await response.blob();
+      const pdfUrl = URL.createObjectURL(pdfBlob);
+      setPdfUrl(pdfUrl);
+      setShowPdfViewer(true);
+    } catch (error) {
+      console.error("Error viewing PDF:", error.message);
+      Swal.fire({
+        title: "Error",
+        text: `Failed to fetch PDF for UID: ${refNo}`,
+        icon: "error",
+        confirmButtonText: "Ok",
+      });
+    }
   };
 
   const fetchData = async () => {
@@ -137,7 +107,6 @@ function OfferletterManagement() {
   useEffect(() => {
     fetchData();
   }, []);
-  
 
   const handleSendMail = (uid) => {
     Swal.fire({
@@ -184,23 +153,33 @@ function OfferletterManagement() {
             onChange={handleSearchChange}
             placeholder="Search offer letters"
           />
-          <button
-            onClick={() => {
-              showform ? setshowform(false) : setshowform(true);
-            }}
-          >
+          <button onClick={() => setShowForm(!showForm)}>
             Create New Offer Letter
           </button>
         </div>
-        {showform && (
-           <div className="overlay">
-           <span className="close" onClick={()=>
-             {
-               setshowform(false);
-             }
-           }>&times;</span>
-           <FormOverlay/>
-         </div>
+        {showForm && (
+          <div className="overlay">
+            <span className="close" onClick={() => setShowForm(false)}>
+              &times;
+            </span>
+            <FormOverlay />
+          </div>
+        )}
+        {showPdfViewer && (
+          <div className="overlay">
+            <span className="close" onClick={() => setShowPdfViewer(false)}>
+              &times;
+            </span>
+            <div className="pdf-viewer">
+              <div className="pdf-toolbar"></div>
+              <iframe
+                title="PDF Viewer"
+                src={pdfUrl}
+                width="100%"
+                height="600px"
+              />
+            </div>
+          </div>
         )}
 
         <div className="recent-offers">
@@ -208,13 +187,12 @@ function OfferletterManagement() {
           <table>
             <thead>
               <tr>
-               
                 <th>Name</th>
                 <th>Designation</th>
                 <th>From</th>
                 <th>To</th>
                 <th>UID</th>
-                <th>Generate File</th>
+                <th>Update File</th>
                 <th>View File</th>
                 <th>Send Mail</th>
               </tr>
@@ -222,7 +200,6 @@ function OfferletterManagement() {
             <tbody>
               {filteredLetters.map((letter) => (
                 <tr key={letter.uid}>
-                
                   <td>{letter.name}</td>
                   <td>{letter.designation}</td>
                   <td>{formatDate(letter.from)}</td>
