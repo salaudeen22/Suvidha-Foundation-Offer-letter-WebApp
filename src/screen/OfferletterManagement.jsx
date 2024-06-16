@@ -2,19 +2,15 @@ import React, { useContext, useEffect, useState } from "react";
 import Navbar from "../components/Navbar";
 import SideBarContext from "../ContextProvider/SidebarContext";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faDownload,
-  faEye,
-  faEnvelope,
-} from "@fortawesome/free-solid-svg-icons";
+import { faDownload, faEye, faEnvelope, faEdit } from "@fortawesome/free-solid-svg-icons";
 import Swal from "sweetalert2";
 import FormOverlay from "../components/FormOverlay";
 import { pdfjs } from "react-pdf"; // Import react-pdf
+import UpdateFormOverlay from "../components/UpdateFormOverlay";
 
 pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.min.js`;
 
 function OfferletterManagement() {
-  // Your existing code
   const { sidebar } = useContext(SideBarContext);
   const [numLetters, setNumLetters] = useState(10);
   const [searchTerm, setSearchTerm] = useState("");
@@ -22,6 +18,16 @@ function OfferletterManagement() {
   const [showForm, setShowForm] = useState(false);
   const [pdfUrl, setPdfUrl] = useState("");
   const [showPdfViewer, setShowPdfViewer] = useState(false);
+  const [FetchData, setFetchData] = useState({
+    name: "",
+    email: "",
+    designation: "",
+    from: "",
+    to: "",
+    uid: "",
+    paid: "unpaid",
+  });
+  const [editForm, setEditForm] = useState(false);
 
   const handleNumLettersChange = (e) => {
     setNumLetters(e.target.value);
@@ -35,41 +41,37 @@ function OfferletterManagement() {
     const options = { day: "numeric", month: "long" };
     return new Date(dateString).toLocaleDateString("en-US", options);
   }
-
-  const handleGenerate = async (refNo) => {
+  const handleEdit = async (refNo) => {
     try {
-      const response = await fetch(
-        `http://localhost:4000/api/generate/${refNo}`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
-
+      const response = await fetch(`http://localhost:4000/api/fetchofferLetters/${refNo}`);
       if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || "Failed to generate offer letter");
+        throw new Error("Failed to fetch UID data");
       }
-
-      const pdfBlob = await response.blob();
-      const pdfUrl = URL.createObjectURL(pdfBlob);
-
-      const link = document.createElement("a");
-      link.href = pdfUrl;
-      link.download = "OfferLetter.pdf";
-      document.body.appendChild(link);
-
-      link.click();
-
-      document.body.removeChild(link);
-      URL.revokeObjectURL(pdfUrl);
+  
+      const result = await response.json();
+      const data = result.data; 
+      // console.log("Fetched data:", data); // Debugging line
+  
+    
+      if (data && data.name && data.email && data.designation && data.from && data.to && data.uid && data.paid) {
+        setFetchData({
+          name: data.name,
+          email: data.email,
+          designation: data.designation,
+          from: data.from,
+          to: data.to,
+          uid: data.uid,
+          paid: data.paid,
+        });
+        setEditForm(true);
+      } else {
+        console.error("Fetched data is incomplete:", data); // Debugging line
+      }
     } catch (error) {
-      console.error("Error generating offer letter:", error.message);
+      console.log("Error:", error);
     }
   };
-
+  
   const handleView = async (refNo) => {
     try {
       const response = await fetch(`http://localhost:4000/api/view/${refNo}`);
@@ -117,13 +119,35 @@ function OfferletterManagement() {
       confirmButtonColor: "#3085d6",
       cancelButtonColor: "#d33",
       confirmButtonText: "Yes, send it!",
-    }).then((result) => {
+    }).then(async (result) => {
       if (result.isConfirmed) {
-        Swal.fire({
-          title: "SendMail!",
-          text: "Your file has been sent.",
-          icon: "success",
-        });
+        try {
+          const response = await fetch(`http://localhost:4000/api/sendMail/${uid}`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+          });
+
+          if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.message || "Failed to send email");
+          }
+
+          Swal.fire({
+            title: "Email Sent!",
+            text: "Your offer letter has been sent successfully.",
+            icon: "success",
+          });
+        } catch (error) {
+          console.error("Error sending email:", error.message);
+          Swal.fire({
+            title: "Error",
+            text: "Failed to send email. Please try again later.",
+            icon: "error",
+            confirmButtonText: "Ok",
+          });
+        }
       }
     });
   };
@@ -165,6 +189,14 @@ function OfferletterManagement() {
             <FormOverlay />
           </div>
         )}
+        {editForm && (
+          <div className="overlay">
+            <span className="close" onClick={() => setEditForm(false)}>
+              &times;
+            </span>
+            <UpdateFormOverlay data={FetchData} />
+          </div>
+        )}
         {showPdfViewer && (
           <div className="overlay">
             <span className="close" onClick={() => setShowPdfViewer(false)}>
@@ -172,12 +204,7 @@ function OfferletterManagement() {
             </span>
             <div className="pdf-viewer">
               <div className="pdf-toolbar"></div>
-              <iframe
-                title="PDF Viewer"
-                src={pdfUrl}
-                width="100%"
-                height="600px"
-              />
+              <iframe title="PDF Viewer" src={pdfUrl} width="100%" height="600px" />
             </div>
           </div>
         )}
@@ -205,8 +232,8 @@ function OfferletterManagement() {
                   <td>{formatDate(letter.from)}</td>
                   <td>{formatDate(letter.to)}</td>
                   <td>{letter.uid}</td>
-                  <td onClick={() => handleGenerate(letter.uid)}>
-                    <FontAwesomeIcon icon={faDownload} />
+                  <td onClick={() => handleEdit(letter.uid)}>
+                    <FontAwesomeIcon icon={faEdit} />
                   </td>
                   <td onClick={() => handleView(letter.uid)}>
                     <FontAwesomeIcon icon={faEye} />
