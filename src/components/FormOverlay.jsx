@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import Swal from "sweetalert2";
 
-function FormOverlay() {
+function FormOverlay({ onClose }) {
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -48,6 +48,9 @@ function FormOverlay() {
   };
   return (
     <div className="form-container">
+    <span className="close" onClick={onClose}>
+        &times;
+      </span>
       <h2>Create New Offer Letter</h2>
       <form onSubmit={handleSubmit} className="offer-form">
         <div className="form-group">
@@ -129,6 +132,7 @@ function FormOverlay() {
           </select>
         </div>
         <button type="submit">Submit</button>
+        <button onClick={onClose}>Close</button>
       </form>
     </div>
   );

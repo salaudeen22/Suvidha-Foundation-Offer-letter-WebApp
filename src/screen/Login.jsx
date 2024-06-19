@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import Swal from "sweetalert2";
 import { useNavigate } from "react-router-dom";
+// import logo from "./logo.png"; // Ensure the logo file is in the correct path
 
 function Login() {
   const navigate = useNavigate();
@@ -10,7 +11,7 @@ function Login() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await fetch(`http://localhost:4000/api/loginuser`, { // replace with your actual API endpoint
+      const response = await fetch(`http://localhost:4000/api/loginuser`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -49,7 +50,7 @@ function Login() {
     <div className="login">
       <div className="login-container">
         <div className="login-right">
-          <h2>Suvidha Foundation</h2>
+          <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRM7vNLb7DLGkqB26WLYGjp89xhYrFWOVZ1ow&s" alt="Suvidha Foundation" className="logo" />
         </div>
         <div className="loginline"></div>
         <div className="login-left">
@@ -76,9 +77,10 @@ function Login() {
                 onChange={(e) => setPassword(e.target.value)}
                 required
               />
+              <a href="/reset-password" className="forgot">Forgot password?</a>
             </div>
+
             <button type="submit">Login</button>
-            <a href="/reset-password">Forgot password?</a>
           </form>
         </div>
       </div>

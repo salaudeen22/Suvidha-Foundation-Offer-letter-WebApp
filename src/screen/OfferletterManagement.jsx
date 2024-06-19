@@ -183,10 +183,10 @@ function OfferletterManagement() {
         </div>
         {showForm && (
           <div className="overlay">
-            <span className="close" onClick={() => setShowForm(false)}>
-              &times;
-            </span>
-            <FormOverlay />
+            
+            
+    <FormOverlay onClose={() => setShowForm(false)} />
+
           </div>
         )}
         {editForm && (
@@ -211,7 +211,7 @@ function OfferletterManagement() {
 
         <div className="recent-offers">
           <h2>Top 10 Recent Offer Letters</h2>
-          <table>
+          <div><table>
             <thead>
               <tr>
                 <th>Name</th>
@@ -225,6 +225,7 @@ function OfferletterManagement() {
               </tr>
             </thead>
             <tbody>
+
               {filteredLetters.map((letter) => (
                 <tr key={letter.uid}>
                   <td>{letter.name}</td>
@@ -244,7 +245,7 @@ function OfferletterManagement() {
                 </tr>
               ))}
             </tbody>
-          </table>
+          </table></div>
         </div>
       </div>
     </div>
