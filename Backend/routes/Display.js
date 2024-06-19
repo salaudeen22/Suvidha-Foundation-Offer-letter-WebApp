@@ -13,7 +13,7 @@ router.get('/offerLetters', async (req, res) => {
 });
 router.get('/recentofferLetters', async (req, res) => {
   try {
-      const offerLetters = await OfferLetter.find().sort({ createdAt: -1 }).limit(5);
+      const offerLetters = await OfferLetter.find().sort({ createdAt: -1 }).limit(4);
       res.status(200).json({ success: true, data: offerLetters });
   } catch (error) {
       console.error(error);
