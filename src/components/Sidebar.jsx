@@ -32,7 +32,7 @@ function Sidebar() {
 
   return (
     <div className={`sidebar ${sidebar ? 'visible' : 'hidden'}`}>
-      <div className="logo">
+      <div className="siderLogo">
         <h2>Suvidha Foundation</h2>
       </div>
 
