@@ -1,317 +1,275 @@
-const express = require("express");
-const router = express.Router();
-const OfferLetter = require("../model/OfferLetter");
-const { body, validationResult } = require("express-validator");
-const { v4: uuidv4 } = require("uuid");
-const generatePDF = require("../Scripts/createpdf");
-const sendMail = require("../Scripts/SendMail");
-const path = require("path");
-const fs = require("fs");
-const { PDFDocument } = require("pdf-lib");
+import React, { useContext, useEffect, useState } from "react";
+import Navbar from "../components/Navbar";
+import SideBarContext from "../ContextProvider/SidebarContext";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faDownload, faEye, faEnvelope, faEdit } from "@fortawesome/free-solid-svg-icons";
+import Swal from "sweetalert2";
+import FormOverlay from "../components/FormOverlay";
+import { pdfjs } from "react-pdf";
+import UpdateFormOverlay from "../components/UpdateFormOverlay";
 
-// Universal path to store temporary PDF files
-const resolveFilePath = (refNo) => path.join(__dirname, `../temp/${refNo}.pdf`);
+pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.min.js`;
 
-// Route to create a new offer letter
-router.post(
-  "/offerLetter",
-  [
-    body("name").notEmpty().withMessage("Name is required"),
-    body("email").isEmail().withMessage("Valid email is required"),
-    body("designation").notEmpty().withMessage("Designation is required"),
-    body("from").isISO8601().toDate().withMessage("Valid start date is required"),
-    body("to").isISO8601().toDate().withMessage("Valid end date is required"),
-  ],
-  async (req, res) => {
+function OfferletterManagement() {
+  const { sidebar } = useContext(SideBarContext);
+  const [numLetters, setNumLetters] = useState(10);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [recentLetters, setRecentLetters] = useState([]);
+  const [showForm, setShowForm] = useState(false);
+  const [pdfUrl, setPdfUrl] = useState("");
+  const [showPdfViewer, setShowPdfViewer] = useState(false);
+  const [FetchData, setFetchData] = useState({
+    name: "",
+    email: "",
+    designation: "",
+    from: "",
+    to: "",
+    uid: "",
+    paid: "unpaid",
+  });
+  const [editForm, setEditForm] = useState(false);
+
+  const handleNumLettersChange = (e) => {
+    setNumLetters(e.target.value);
+  };
+
+  const handleSearchChange = (e) => {
+    setSearchTerm(e.target.value);
+  };
+
+  function formatDate(dateString) {
+    const options = { day: "numeric", month: "long" };
+    return new Date(dateString).toLocaleDateString("en-US", options);
+  }
+
+  const handleEdit = async (refNo) => {
     try {
-      const errors = validationResult(req);
-      if (!errors.isEmpty()) {
-        return res.status(400).json({ success: false, errors: errors.array() });
+      const response = await fetch(`http://localhost:4000/api/fetchofferLetters/${refNo}`);
+      if (!response.ok) {
+        throw new Error("Failed to fetch UID data");
       }
 
-      const { name, email, designation, from, to, paid } = req.body;
-      const uid = uuidv4();
+      const result = await response.json();
+      const data = result.data;
 
-      const newOfferLetter = new OfferLetter({
-        name,
-        email,
-        designation,
-        from,
-        to,
-        uid,
-        paid,
-      });
-
-      await newOfferLetter.save();
-
-      res.status(200).json({
-        success: true,
-        message: "Offer letter uploaded successfully",
-        uid,
-      });
+      if (data && data.name && data.email && data.designation && data.from && data.to && data.uid && data.paid) {
+        setFetchData({
+          name: data.name,
+          email: data.email,
+          designation: data.designation,
+          from: data.from,
+          to: data.to,
+          uid: data.uid,
+          paid: data.paid,
+        });
+        setEditForm(true);
+      } else {
+        console.error("Fetched data is incomplete:", data);
+      }
     } catch (error) {
-      console.error(error);
-      res.status(500).json({ success: false, message: "Internal Server Error" });
+      console.log("Error:", error);
     }
-  }
-);
+  };
 
-// Route to generate an offer letter PDF
-router.post("/generate/:refNo", async (req, res) => {
-  let outputPDF;
-  try {
-    const refNo = req.params.refNo;
-    const offerLetter = await OfferLetter.findOne({ uid: refNo });
-
-    if (!offerLetter) {
-      return res.status(404).json({ success: false, message: "Offer letter not found" });
-    }
-
-    outputPDF = resolveFilePath(refNo);
-    console.log("PDF path:", outputPDF);
-
-    await generatePDF(
-      path.join(__dirname, "../pdf/fill.pdf"),
-      outputPDF,
-      offerLetter
-    );
-
-    offerLetter.offerLetter = outputPDF;
-    let pdfDoc = outputPDF;
-    pdfDoc.getForm().flatten();
-    await offerLetter.save();
-
-    res.status(200).json({
-      success: true,
-      message: "Offer letter generated successfully",
-      outputPDF,
-    });
-  } catch (error) {
-    console.error("Error generating PDF:", error);
-    res.status(500).json({ success: false, message: "Internal Server Error" });
-
-    // Delete the generated PDF file if it was created before the error occurred
-    if (outputPDF && fs.existsSync(outputPDF)) {
-      fs.unlinkSync(outputPDF);
-      console.log(`Deleted PDF file: ${outputPDF}`);
-    }
-  }
-});
-
-
-
-router.put(
-  "/updateofferLetter/:uid",
-  [
-    body("name").notEmpty().withMessage("Name is required"),
-    body("email").isEmail().withMessage("Valid email is required"),
-    body("designation").notEmpty().withMessage("Designation is required"),
-    body("from").isISO8601().toDate().withMessage("Valid start date is required"),
-    body("to").isISO8601().toDate().withMessage("Valid end date is required"),
-  ],
-  async (req, res) => {
+  const handleView = async (refNo) => {
     try {
-      const errors = validationResult(req);
-      if (!errors.isEmpty()) {
-        return res.status(400).json({ success: false, errors: errors.array() });
+      const response = await fetch(`http://localhost:4000/api/view/${refNo}`);
+      if (!response.ok) {
+        throw new Error(`Failed to fetch PDF for UID: ${refNo}`);
       }
-
-      const { name, email, designation, from, to, paid } = req.body;
-      const uid = req.params.uid;
-
-      const updatedOfferLetter = await OfferLetter.findOneAndUpdate(
-        { uid },
-        { name, email, designation, from, to, paid },
-        { new: true }
-      );
-
-      if (!updatedOfferLetter) {
-        return res.status(404).json({ success: false, message: "Offer letter not found" });
-      }
-
-      res.status(200).json({
-        success: true,
-        message: "Offer letter updated successfully",
-        uid,
-      });
+      const pdfBlob = await response.blob();
+      const pdfUrl = URL.createObjectURL(pdfBlob);
+      setPdfUrl(pdfUrl);
+      setShowPdfViewer(true);
     } catch (error) {
-      console.error(error);
-      res.status(500).json({ success: false, message: "Internal Server Error" });
+      console.error("Error viewing PDF:", error.message);
+      Swal.fire({
+        title: "Error",
+        text: `Failed to fetch PDF for UID: ${refNo}`,
+        icon: "error",
+        confirmButtonText: "Ok",
+      });
     }
-  }
-);
+  };
 
-
-router.get("/fetchofferLetters/:uid", async (req, res) => {
-  try {
-    const uid = req.params.uid;
-    const offerLetter = await OfferLetter.findOne({ uid });
-
-    if (!offerLetter) {
-      return res.status(404).json({ success: false, message: "Offer letter not found" });
+  const fetchData = async () => {
+    try {
+      const response = await fetch("http://localhost:4000/api/offerLetters");
+      if (!response.ok) {
+        throw new Error("Network response was not ok");
+      }
+      const data = await response.json();
+      setRecentLetters(data.data);
+    } catch (error) {
+      console.error("Error fetching offer letters:", error);
     }
+  };
 
-    res.status(200).json({ success: true, data: offerLetter });
-  } catch (error) {
-    console.error("Error fetching offer letter:", error);
-    res.status(500).json({ success: false, message: "Internal Server Error" });
-  }
-});
+  useEffect(() => {
+    fetchData();
+  }, []);
 
+  const handleSendMail = (uid) => {
+    Swal.fire({
+      title: "Are you sure?",
+      text: "You won't be able to revert this!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, send it!",
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        try {
+          const response = await fetch(`http://localhost:4000/api/sendMail/${uid}`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+          });
 
-router.get("/view/:refNo", async (req, res) => {
-  try {
-    const refNo = req.params.refNo;
-    const offerLetter = await OfferLetter.findOne({ uid: refNo });
+          if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.message || "Failed to send email");
+          }
 
-    if (!offerLetter) {
-      return res.status(404).json({ success: false, message: "Offer letter not found" });
-    }
-
-    const pdfPath = resolveFilePath(refNo);
-    console.log("PDF path for viewing:", pdfPath);
-
-    // Check if the PDF file exists
-    if (!fs.existsSync(pdfPath)) {
-      console.log("PDF file does not exist. Generating new PDF.");
-      const templatePath = path.join(__dirname, "../pdf/fill.pdf");
-      await generatePDF(templatePath, pdfPath, offerLetter);
-    } else {
-      console.log("PDF file exists.");
-    }
-
-    const existingPdfBytes = fs.readFileSync(pdfPath);
-
-    const pdfDoc = await PDFDocument.load(existingPdfBytes);
-
-    pdfDoc.getForm().flatten();
-
-    const pdfBytes = await pdfDoc.save();
-
-   
-    res.setHeader("Content-Type", "application/pdf");
-    res.setHeader("Content-Disposition", `inline; filename=${refNo}.pdf`);
-    res.send(Buffer.from(pdfBytes));
-
-   
-    fs.unlinkSync(pdfPath);
-    console.log(`Deleted PDF file: ${pdfPath}`);
-  } catch (error) {
-    console.error("Error viewing PDF:", error);
-    res.status(500).json({ success: false, message: "Internal Server Error" });
-  }
-});
-
-
-// Route to send an offer letter via email
-router.post("/sendMail/:refNo", async (req, res) => {
-  let outputPDF;
-  try {
-    const refNo = req.params.refNo;
-    const offerLetter = await OfferLetter.findOne({ uid: refNo });
-
-    if (!offerLetter) {
-      return res.status(404).json({ success: false, message: "Offer letter not found" });
-    }
-
-    const pdfPath = resolveFilePath(refNo);
-
-    // Check if the PDF file exists, if not generate it
-    if (!fs.existsSync(pdfPath)) {
-      console.log("PDF file does not exist. Generating new PDF.");
-      const templatePath = path.join(__dirname, "../pdf/fill.pdf");
-      await generatePDF(templatePath, pdfPath, offerLetter);
-    } else {
-      console.log("PDF file exists.");
-    }
-
-    // Check again if the PDF file exists after potentially generating it
-    if (!fs.existsSync(pdfPath)) {
-      return res.status(404).json({ success: false, message: "PDF file not found" });
-    }
-
-    // Send email with the offer letter attached
-    const mailOptions = {
-      from: process.env.USER_EMAIL,
-      to: offerLetter.email,
-      subject: "Your Offer Letter from Suvidha Foundation",
-      text: `Dear ${offerLetter.name},
-
-Greetings of the day!
-
-Congratulations on your offer from Suvidha Foundation! Please find attached the detailed offer letter.
-
-For the process of acceptance, please revert with the physically signed copy of the Offer Letter within 48 hours to hr@suvidhafoundationedutech.org.
-
-Upon successful completion of your internship, you will be awarded with a "Certificate of Completion" and, based on your performance, a "Letter of Recommendation".
-
-We look forward to hearing from you and hope you'll join our team!
-
-Best regards,
-
-Sonal Godshelwar
-Human Resource Team
-Suvidha Foundation
-R. No: MH/568/95/Nagpur
-H.No. 1951, W.N.4, Khaperkheda, Saoner, Nagpur
-Email: info@suvidhafoundationedutech.org
-Phone No: +918378042291
-`,
-      attachments: [
-        {
-          filename: "OfferLetter.pdf",
-          path: pdfPath,
-        },
-      ],
-    };
-
-   
-    await sendMail(mailOptions);
-
-   
-    fs.unlinkSync(pdfPath);
-    console.log(`Deleted PDF file: ${pdfPath}`);
-
-    res.status(200).json({ success: true, message: "Email sent successfully" });
-  } catch (error) {
-    console.error("Error sending email:", error);
-    res.status(500).json({ success: false, message: "Internal Server Error" });
-
-   
-    if (outputPDF && fs.existsSync(outputPDF)) {
-      fs.unlinkSync(outputPDF);
-      console.log(`Deleted PDF file: ${outputPDF}`);
-    }
-  }
-});
-
-router.delete("/offerLetter/:uid", async (req, res) => {
-  try {
-    const uid = req.params.uid;
-    const offerLetter = await OfferLetter.findOne({ uid });
-
-    if (!offerLetter) {
-      return res.status(404).json({ success: false, message: "Offer letter not found" });
-    }
-
-    // Delete associated PDF file if exists
-    const pdfPath = resolveFilePath(uid);
-    if (fs.existsSync(pdfPath)) {
-      fs.unlinkSync(pdfPath);
-      console.log(`Deleted PDF file: ${pdfPath}`);
-    }
-
-    await OfferLetter.findOneAndDelete({ uid });
-
-    res.status(200).json({
-      success: true,
-      message: "Offer letter deleted successfully",
-      uid,
+          Swal.fire({
+            title: "Email Sent!",
+            text: "Your offer letter has been sent successfully.",
+            icon: "success",
+          });
+        } catch (error) {
+          console.error("Error sending email:", error.message);
+          Swal.fire({
+            title: "Error",
+            text: "Failed to send email. Please try again later.",
+            icon: "error",
+            confirmButtonText: "Ok",
+          });
+        }
+      }
     });
-  } catch (error) {
-    console.error("Error deleting offer letter:", error);
-    res.status(500).json({ success: false, message: "Internal Server Error" });
-  }
-});
+  };
 
-module.exports = router;
+  const filteredLetters = recentLetters
+    .filter(
+      (letter) =>
+        letter.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        letter.uid.toLowerCase().includes(searchTerm.toLowerCase())
+    )
+    .slice(0, numLetters);
+
+  
+
+
+ 
+  const [currentPage, setCurrentPage] = useState(1);
+  const indexOfLastItem = currentPage * numLetters;
+  const indexOfFirstItem = indexOfLastItem - numLetters;
+  const currentItems = filteredLetters.slice(indexOfFirstItem, indexOfLastItem);
+
+  const totalPages = Math.ceil(filteredLetters.length / numLetters);
+
+  const handlePageChange = (pageNumber) => {
+    setCurrentPage(pageNumber);
+  };
+
+  console.log(filteredLetters.length);
+
+
+  return (
+    <div className={`Home ${sidebar ? "sidebar-visible" : "sidebar-hidden"}`}>
+      <Navbar />
+      <div className="content">
+        <div className="controls">
+          <input
+            type="number"
+            value={numLetters}
+            onChange={handleNumLettersChange}
+            placeholder="Number of offer letters"
+          />
+          <input
+            type="text"
+            value={searchTerm}
+            onChange={handleSearchChange}
+            placeholder="Search offer letters"
+          />
+          <button onClick={() => setShowForm(!showForm)}>
+            Create New Offer Letter
+          </button>
+        </div>
+        {showForm && (
+          <div className="overlay">
+            <FormOverlay onClose={() => setShowForm(false)} />
+          </div>
+        )}
+        {editForm && (
+          <div className="overlay">
+         
+            <UpdateFormOverlay data={FetchData} onClose={() => setEditForm(false)}  />
+          </div>
+        )}
+        {showPdfViewer && (
+          <div className="overlay">
+           
+            <div className="pdf-viewer">
+              <div className="pdf-toolbar"></div>
+              <iframe title="PDF Viewer" src={pdfUrl} width="100%" height="600px" />
+            </div>
+          </div>
+        )}
+
+        <div className="recent-offers">
+          <h2>Top 10 Recent Offer Letters</h2>
+          <div>
+            <table>
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>Designation</th>
+                  <th>From</th>
+                  <th>To</th>
+                  <th>UID</th>
+             
+                  <th>View File</th>
+                  <th>Send Mail</th>
+                </tr>
+              </thead>
+              <tbody>
+                {filteredLetters.map((letter) => (
+                  <tr key={letter.uid} onClick={() => handleEdit(letter.uid)}>
+                    <td>{letter.name}</td>
+                    <td>{letter.designation}</td>
+                    <td>{formatDate(letter.from)}</td>
+                    <td>{formatDate(letter.to)}</td>
+                    <td>{letter.uid}</td>
+                  
+                    <td onClick={(e) => { e.stopPropagation(); handleView(letter.uid); }}>
+                      <FontAwesomeIcon icon={faEye} />
+                    </td>
+                    <td onClick={(e) => { e.stopPropagation(); handleSendMail(letter.uid); }}>
+                      <FontAwesomeIcon icon={faEnvelope} />
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+          <div className="pagination">
+            {Array.from({ length: totalPages }, (_, index) => (
+              <button
+                key={index + 1}
+                onClick={() => handlePageChange(index + 1)}
+                className={currentPage === index + 1 ? "active" : ""}
+              >
+                {index + 1}
+              </button>
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export default OfferletterManagement;
