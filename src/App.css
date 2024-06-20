@@ -885,3 +885,85 @@ table td a:hover {
 
 
 } */
+
+
+/* dropdown for pagination */
+
+.stylish-dropdown {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  background-color: #f0f0f0;  
+  border: 1px solid #ccc;  
+  border-radius: 4px; 
+  padding: 10px 30px 10px 10px; 
+  font-size: 16px;
+  color: #333;
+  cursor: pointer; 
+  outline: none; 
+  transition: all 0.3s ease; 
+  position: relative; 
+}
+
+.stylish-dropdown:hover {
+  background-color: #e0e0e0; 
+}
+
+.stylish-dropdown:focus {
+  border-color: #007bff; 
+  box-shadow: 0 0 5px rgba(0, 123, 255, 0.5); 
+}
+
+.stylish-dropdown-container {
+  position: relative;
+  display: inline-block;
+}
+
+.stylish-dropdown-container::after {
+  content: '\1F897'; 
+  font-size: 25px; 
+  color: #333;
+  position: absolute;
+  top: 65%;
+  right: 4px; 
+  pointer-events: none;
+  transform: translateY(-50%);
+   
+}
+
+
+/* Pagination */
+
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 20px;
+}
+
+.pagination button {
+  background-color: #f0f0f0; 
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  padding: 8px 16px; 
+  margin: 0 5px; 
+  font-size: 16px; 
+  color: #333;
+  cursor: pointer; 
+  outline: none; 
+  transition: all 0.3s ease; 
+}
+
+.pagination button:hover {
+  background-color: #e0e0e0; 
+}
+
+.pagination button.active {
+  background-color: #2C3E50; 
+  color: white; 
+  border-color: #2C3E50; 
+}
+
+.pagination button:focus {
+  box-shadow: 0 0 5px #35495e; 
+}
