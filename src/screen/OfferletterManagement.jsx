@@ -182,12 +182,17 @@ function OfferletterManagement() {
       <Navbar />
       <div className="content">
         <div className="controls">
-          <input
-            type="number"
-            value={numLetters}
-            onChange={handleNumLettersChange}
-            placeholder="Number of offer letters"
-          />
+        <p style={{fontSize:"18px",fontWeight:"500",color:"#2c3135;"}}>Number of recent records <span className="stylish-dropdown-container">
+            <select value={numLetters} onChange={handleNumLettersChange} className="stylish-dropdown">
+              <option value={5}>5</option>
+              <option value={10}>10</option>
+              <option value={20}>20</option>
+              <option value={30}>30</option>
+              <option value={40}>40</option>
+              <option value={50}>50</option>
+            </select>
+           </span></p>
+
           <input
             type="text"
             value={searchTerm}
