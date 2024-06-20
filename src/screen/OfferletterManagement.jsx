@@ -29,30 +29,38 @@ function OfferletterManagement() {
   });
   const [editForm, setEditForm] = useState(false);
 
+  const [currentPage, setCurrentPage] = useState(1);
+
+
   const handleNumLettersChange = (e) => {
-    setNumLetters(e.target.value);
+    const value = parseInt(e.target.value, 10);
+    if ( !isNaN(value)) {
+      setNumLetters(value);
+    }
   };
+  
 
   const handleSearchChange = (e) => {
+
     setSearchTerm(e.target.value);
+
   };
 
   function formatDate(dateString) {
     const options = { day: "numeric", month: "long" };
     return new Date(dateString).toLocaleDateString("en-US", options);
   }
+
   const handleEdit = async (refNo) => {
     try {
       const response = await fetch(`http://localhost:4000/api/fetchofferLetters/${refNo}`);
       if (!response.ok) {
         throw new Error("Failed to fetch UID data");
       }
-  
+
       const result = await response.json();
-      const data = result.data; 
-      // console.log("Fetched data:", data); // Debugging line
-  
-    
+      const data = result.data;
+
       if (data && data.name && data.email && data.designation && data.from && data.to && data.uid && data.paid) {
         setFetchData({
           name: data.name,
@@ -65,13 +73,13 @@ function OfferletterManagement() {
         });
         setEditForm(true);
       } else {
-        console.error("Fetched data is incomplete:", data); // Debugging line
+        console.error("Fetched data is incomplete:", data);
       }
     } catch (error) {
       console.log("Error:", error);
     }
   };
-  
+
   const handleView = async (refNo) => {
     try {
       const response = await fetch(`http://localhost:4000/api/view/${refNo}`);
@@ -152,25 +160,42 @@ function OfferletterManagement() {
     });
   };
 
-  const filteredLetters = recentLetters
-    .filter(
-      (letter) =>
-        letter.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        letter.uid.toLowerCase().includes(searchTerm.toLowerCase())
-    )
-    .slice(0, numLetters);
+  const filteredLetters = recentLetters.filter(
+    (letter) =>
+      letter.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      letter.uid.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+ 
+
+  const indexOfLastItem = currentPage * numLetters;
+  const indexOfFirstItem = indexOfLastItem - numLetters;
+  const currentItems = filteredLetters.slice(indexOfFirstItem, indexOfLastItem);
+
+  const totalPages = Math.ceil(filteredLetters.length / numLetters);
+
+  const handlePageChange = (pageNumber) => {
+    setCurrentPage(pageNumber);
+  };
 
   return (
     <div className={`Home ${sidebar ? "sidebar-visible" : "sidebar-hidden"}`}>
       <Navbar />
       <div className="content">
         <div className="controls">
-          <input
-            type="number"
-            value={numLetters}
-            onChange={handleNumLettersChange}
-            placeholder="Number of offer letters"
-          />
+
+            <p style={{fontSize:"18px",fontWeight:"500",color:"#2c3135;"}}>Number of recent records <span className="stylish-dropdown-container">
+            <select value={numLetters} onChange={handleNumLettersChange} className="stylish-dropdown">
+              <option value={5}>5</option>
+              <option value={10}>10</option>
+              <option value={20}>20</option>
+              <option value={30}>30</option>
+              <option value={40}>40</option>
+              <option value={50}>50</option>
+            </select>
+           </span></p>
+           
+          
           <input
             type="text"
             value={searchTerm}
@@ -183,10 +208,7 @@ function OfferletterManagement() {
         </div>
         {showForm && (
           <div className="overlay">
-            
-            
-    <FormOverlay onClose={() => setShowForm(false)} />
-
+            <FormOverlay onClose={() => setShowForm(false)} />
           </div>
         )}
         {editForm && (
@@ -211,41 +233,53 @@ function OfferletterManagement() {
 
         <div className="recent-offers">
           <h2>Top 10 Recent Offer Letters</h2>
-          <div><table>
-            <thead>
-              <tr>
-                <th>Name</th>
-                <th>Designation</th>
-                <th>From</th>
-                <th>To</th>
-                <th>UID</th>
-                <th>Update File</th>
-                <th>View File</th>
-                <th>Send Mail</th>
-              </tr>
-            </thead>
-            <tbody>
-
-              {filteredLetters.map((letter) => (
-                <tr key={letter.uid}>
-                  <td>{letter.name}</td>
-                  <td>{letter.designation}</td>
-                  <td>{formatDate(letter.from)}</td>
-                  <td>{formatDate(letter.to)}</td>
-                  <td>{letter.uid}</td>
-                  <td onClick={() => handleEdit(letter.uid)}>
-                    <FontAwesomeIcon icon={faEdit} />
-                  </td>
-                  <td onClick={() => handleView(letter.uid)}>
-                    <FontAwesomeIcon icon={faEye} />
-                  </td>
-                  <td onClick={() => handleSendMail(letter.uid)}>
-                    <FontAwesomeIcon icon={faEnvelope} />
-                  </td>
+          <div>
+            <table>
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>Designation</th>
+                  <th>From</th>
+                  <th>To</th>
+                  <th>UID</th>
+                  <th>Update File</th>
+                  <th>View File</th>
+                  <th>Send Mail</th>
                 </tr>
+              </thead>
+              <tbody>
+                {currentItems.map((letter) => (
+                  <tr key={letter.uid}>
+                    <td>{letter.name}</td>
+                    <td>{letter.designation}</td>
+                    <td>{formatDate(letter.from)}</td>
+                    <td>{formatDate(letter.to)}</td>
+                    <td>{letter.uid}</td>
+                    <td onClick={() => handleEdit(letter.uid)}>
+                      <FontAwesomeIcon icon={faEdit} />
+                    </td>
+                    <td onClick={() => handleView(letter.uid)}>
+                      <FontAwesomeIcon icon={faEye} />
+                    </td>
+                    <td onClick={() => handleSendMail(letter.uid)}>
+                      <FontAwesomeIcon icon={faEnvelope} />
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+          <div className="pagination">
+              {Array.from({ length: totalPages }, (_, index) => (
+                <button
+                  key={index + 1}
+                  onClick={() => handlePageChange(index + 1)}
+                  className={currentPage === index + 1 ? "active" : ""}
+                >
+                  {index + 1}
+                </button>
               ))}
-            </tbody>
-          </table></div>
+            </div>
         </div>
       </div>
     </div>
