@@ -88,8 +88,9 @@ router.post(
       console.log(userdata.role);
 
       const authtoken = jwt.sign(data, jwtsecret, { expiresIn: "10d" });
-
-      res.json({ success: true, authtoken });
+const username=userdata.name;
+// console.log(username);
+      res.json({ success: true, authtoken ,username});
     } catch (error) {
       console.log(error);
       res.json({ success: false });

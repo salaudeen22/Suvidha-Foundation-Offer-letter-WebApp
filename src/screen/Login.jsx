@@ -33,6 +33,7 @@ function Login() {
           icon: "success",
         });
         localStorage.setItem("userEmail", email);
+        localStorage.setItem("userName", json.username);
         localStorage.setItem("authtoken", json.authtoken);
 
         navigate("/home");

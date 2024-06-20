@@ -4,7 +4,8 @@ const OfferLetter = require("../model/OfferLetter");
 
 router.get('/offerLetters', async (req, res) => {
     try {
-      const offerLetters = await OfferLetter.find();
+      const offerLetters = await OfferLetter.find().sort({ date: -1 });
+      // console.log(offerLetters);
       res.status(200).json({ success: true, data: offerLetters });
     } catch (error) {
       console.error(error);
@@ -13,7 +14,9 @@ router.get('/offerLetters', async (req, res) => {
 });
 router.get('/recentofferLetters', async (req, res) => {
   try {
-      const offerLetters = await OfferLetter.find().sort({ createdAt: -1 }).limit(4);
+      // Fetch the most recent 4 offer letters, sorted by the date field in descending order
+      const offerLetters = await OfferLetter.find().sort({ date: -1 }).limit(4);
+      // console.log(offerLetters);
       res.status(200).json({ success: true, data: offerLetters });
   } catch (error) {
       console.error(error);
@@ -21,18 +24,46 @@ router.get('/recentofferLetters', async (req, res) => {
   }
 });
 
+router.get('/totalOfferLetters', async (req, res) => {
+  try {
+    const totalCount = await OfferLetter.countDocuments();
+    // console.log(totalCount);
+    res.status(200).json({ success: true, totalCount });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ success: false, message: 'Internal Server Error' });
+  }
+});
+router.get('/currentWorkingOfferLetters', async (req, res) => {
+  try {
+    const currentDate = new Date(); // Get the current date
+
+    const currentWorkingOfferLetters = await OfferLetter.find({
+      // Filter offer letters where the current date is between 'from' and 'to' dates
+      $and: [
+        { from: { $lte: currentDate } }, // Start date is less than or equal to current date
+        { to: { $gte: currentDate } }   // End date is greater than or equal to current date
+      ]
+    }).countDocuments();
+
+    res.status(200).json({ success: true, data: currentWorkingOfferLetters });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ success: false, message: 'Internal Server Error' });
+  }
+});
+
 router.get('/countByDesignation', async (req, res) => {
   try {
     const countByDesignation = await OfferLetter.aggregate([
       { $group: { _id: "$designation", count: { $sum: 1 } } },
-      { $sort: { count: -1 } }, // Sort by count descending
-      { $limit: 5 }, // Limit to top 5
+      { $sort: { count: -1 } }, 
+      { $limit: 5 }, 
     ]);
 
-    // Calculate total count for 'Others'
+  
     const totalOthers = await OfferLetter.countDocuments() - countByDesignation.reduce((acc, curr) => acc + curr.count, 0);
 
-    // Format the response in the desired structure for the pie chart
     let pieChartData = countByDesignation.map(item => ({
       name: item._id,
       value: item.count
