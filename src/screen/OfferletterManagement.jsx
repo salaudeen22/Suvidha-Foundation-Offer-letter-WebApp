@@ -187,17 +187,13 @@ function OfferletterManagement() {
         )}
         {editForm && (
           <div className="overlay">
-            <span className="close" onClick={() => setEditForm(false)}>
-              &times;
-            </span>
-            <UpdateFormOverlay data={FetchData} />
+         
+            <UpdateFormOverlay data={FetchData} onClose={() => setEditForm(false)}  />
           </div>
         )}
         {showPdfViewer && (
           <div className="overlay">
-            <span className="close" onClick={() => setShowPdfViewer(false)}>
-              &times;
-            </span>
+           
             <div className="pdf-viewer">
               <div className="pdf-toolbar"></div>
               <iframe title="PDF Viewer" src={pdfUrl} width="100%" height="600px" />

@@ -10,13 +10,13 @@ function Navbar() {
     setsidebar(!sidebar);
     console.log(sidebar);
   };
-  const username=localStorage.getItem("userEmail");
+  const username=localStorage.getItem("userName");
 
   return (
     <div className="navbar">
       <div className="navbar-state">
         <button className="close-btn" onClick={handleClick}><img src={ham} alt="" srcset="" /></button>
-        <h3 className="welcome-message">Welcome {username}</h3>
+        <h3 className="welcome-message">Welcome, {username}</h3>
       </div>
 
       {/* <input

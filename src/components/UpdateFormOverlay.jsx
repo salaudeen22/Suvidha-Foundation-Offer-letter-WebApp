@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import Swal from "sweetalert2";
 
-function UpdateFormOverlay({ data }) {
+function UpdateFormOverlay({ data, onClose }) {
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -51,6 +51,7 @@ function UpdateFormOverlay({ data }) {
           text: "Offer Letter Updated Successfully",
           icon: "success",
         });
+        onClose(); // Close the overlay on successful submit
       } else {
         Swal.fire({
           icon: "error",
@@ -70,8 +71,58 @@ function UpdateFormOverlay({ data }) {
     }
   };
 
+  const handleDelete = async (e) => {
+    e.preventDefault();
+
+    // Show confirmation dialog
+    Swal.fire({
+      title: "Are you sure?",
+      text: "You won't be able to revert this!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, delete it!",
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        try {
+          const response = await fetch(`http://localhost:4000/api/offerLetter/${formData.uid}`, {
+            method: "DELETE",
+          });
+          const responseData = await response.json();
+          if (responseData.success) {
+            Swal.fire({
+              title: "Deleted!",
+              text: "Offer Letter has been deleted.",
+              icon: "success",
+            });
+            onClose(); // Close the overlay on successful deletion
+          } else {
+            Swal.fire({
+              icon: "error",
+              title: "Oops...",
+              text: responseData.message || "Something went wrong!",
+              footer: '<a href="#">Why do I have this issue?</a>',
+            });
+          }
+        } catch (error) {
+          console.error(error);
+          Swal.fire({
+            icon: "error",
+            title: "Oops...",
+            text: "Something went wrong!",
+            footer: '<a href="#">Why do I have this issue?</a>',
+          });
+        }
+      }
+    });
+  };
+
   return (
     <div className="form-container">
+      <span className="close" onClick={onClose}>
+        &times;
+      </span>
       <h2>Update Offer Letter</h2>
       <form onSubmit={handleSubmit} className="offer-form">
         <div className="form-group">
@@ -160,6 +211,7 @@ function UpdateFormOverlay({ data }) {
           </select>
         </div>
         <button type="submit">Submit</button>
+        <button type="button" onClick={handleDelete}>Delete</button>
       </form>
     </div>
   );

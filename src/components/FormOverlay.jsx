@@ -108,7 +108,7 @@ function FormOverlay({ onClose }) {
             required
           />
         </div>
-        <div className="form-group">
+        {/* <div className="form-group">
           <label htmlFor="uid">UID:</label>
           <input
             type="text"
@@ -118,7 +118,7 @@ function FormOverlay({ onClose }) {
             onChange={handleChange}
             required
           />
-        </div>
+        </div> */}
         <div className="form-group">
           <label htmlFor="paid">Paid:</label>
           <select

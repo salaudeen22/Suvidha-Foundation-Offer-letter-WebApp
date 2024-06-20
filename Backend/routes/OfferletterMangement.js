@@ -285,4 +285,33 @@ Phone No: +918378042291
   }
 });
 
+router.delete("/offerLetter/:uid", async (req, res) => {
+  try {
+    const uid = req.params.uid;
+    const offerLetter = await OfferLetter.findOne({ uid });
+
+    if (!offerLetter) {
+      return res.status(404).json({ success: false, message: "Offer letter not found" });
+    }
+
+    // Delete associated PDF file if exists
+    const pdfPath = resolveFilePath(uid);
+    if (fs.existsSync(pdfPath)) {
+      fs.unlinkSync(pdfPath);
+      console.log(`Deleted PDF file: ${pdfPath}`);
+    }
+
+    await OfferLetter.findOneAndDelete({ uid });
+
+    res.status(200).json({
+      success: true,
+      message: "Offer letter deleted successfully",
+      uid,
+    });
+  } catch (error) {
+    console.error("Error deleting offer letter:", error);
+    res.status(500).json({ success: false, message: "Internal Server Error" });
+  }
+});
+
 module.exports = router;

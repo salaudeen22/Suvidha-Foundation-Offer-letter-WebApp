@@ -11,6 +11,9 @@ function Home() {
   const [pieChartData, setPieChartData] = useState([]);
   const { sidebar } = useContext(SideBarContext);
   const [barGraphData, setBarGraphData] = useState([]);
+  const [totalOfferLetters, setTotalOfferLetters] = useState(0);
+  const [currentWorkingOfferLetters, setCurrentWorkingOfferLetters] =
+    useState(0);
 
   useEffect(() => {
     async function fetchData() {
@@ -34,7 +37,32 @@ function Home() {
     }
 
     fetchData();
+    fetchTotalOfferLetters();
   }, []);
+  const fetchTotalOfferLetters = async () => {
+    try {
+      const response = await fetch(
+        "http://localhost:4000/api/totalOfferLetters"
+      );
+      if (!response.ok) {
+        throw new Error("Failed to fetch total offer letters");
+      }
+      const data = await response.json();
+      setTotalOfferLetters(data.totalCount);
+      // console.log(totalOfferLetters);
+      // Fetch current working offer letters count
+      const currentWorkingResponse = await fetch(
+        "http://localhost:4000/api/currentWorkingOfferLetters"
+      );
+      if (!currentWorkingResponse.ok) {
+        throw new Error("Failed to fetch current working offer letters");
+      }
+      const currentWorkingData = await currentWorkingResponse.json();
+      setCurrentWorkingOfferLetters(currentWorkingData.data);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  };
 
   return (
     <div className={`Home ${sidebar ? "sidebar-visible" : "sidebar-hidden"}`}>
@@ -76,20 +104,20 @@ function Home() {
           </div>
           <div className="midright">
             <div className="TotalBox">
-              <div className="title">Total Accepted Offer Letter </div>
+              <div className="title">Total Number of Employee </div>
               <hr />
               <div className="content">
                 <h1>
-                  <span> 10</span>
+                  <span> {totalOfferLetters}</span>
                 </h1>
               </div>
             </div>
             <div className="TotalBox">
-              <div className="title">Total Accepted Offer Letter </div>
+              <div className="title">Total No of employee Working </div>
               <hr />
               <div className="content">
                 <h1>
-                  <span> 10</span>
+                  <span> {currentWorkingOfferLetters}</span>
                 </h1>
               </div>
             </div>
