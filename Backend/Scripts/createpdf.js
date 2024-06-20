@@ -9,23 +9,29 @@ const createPDF = async (input, output, formData) => {
     // Embedding Helvetica font for consistency
     const helveticaFont = await pdfDoc.embedFont(StandardFonts.Helvetica);
 
-    // Font size for bold fields
-    const fontSizeBold = 10;
-    // Font size for regular fields
-    const fontSizeRegular = 9;
+    // Font sizes and styles for fields
+    const fieldStyles = {
+      date_field: { size: 10, bold: true },
+      ref_field: { size: 11, bold: true },
+      Intern_name: { size: 12, bold: true },
+      destination_field: { size: 10, bold: true },
+      role_field: { size: 10, bold: false },
+      period_field: { size: 10, bold: false }
+    };
 
-    // Log all text field names for debugging purposes
-    console.log('All text fields:');
-    form.getFields().forEach(field => {
-      if (field.constructor.name === 'PDFTextField') {
-        console.log(field.getName());
-      }
-    });
+    // // Log all text field names for debugging purposes
+    // console.log('All text fields:');
+    // form.getFields().forEach(field => {
+    //   if (field.constructor.name === 'PDFTextField') {
+    //     console.log(field.getName());
+    //   }
+    // });
 
     // Function to truncate text to first two words
     const truncateToTwoWords = (text) => {
       const words = text.trim().split(/\s+/);
       if (words.length <= 2) {
+        fieldStyles.destination_field.size=15
         return text;
       } else {
         return words.slice(0, 2).join(' ');
@@ -40,19 +46,30 @@ const createPDF = async (input, output, formData) => {
     if (formData.name) {
       const internNameField = form.getTextField('Intern_name');
       internNameField.setText(formData.name);
-      internNameField.defaultUpdateAppearances(helveticaFont);
-      internNameField.defaultUpdateAppearances(helveticaFont, fontSizeBold);
+      if (fieldStyles.Intern_name.bold) {
+        internNameField.defaultUpdateAppearances(helveticaFont);
+        internNameField.defaultUpdateAppearances(helveticaFont, fieldStyles.Intern_name.size);
+      } else {
+        internNameField.defaultUpdateAppearances(helveticaFont, fieldStyles.Intern_name.size);
+      }
     }
 
     // Truncate destination_field to first two words if exceeds 12 characters
     let truncatedDesignation = formData.designation;
-    if (truncatedDesignation.length > 12) {
+    if (truncatedDesignation.length > 10) {
       truncatedDesignation = truncateToTwoWords(formData.designation);
     }
     form.getTextField('destination_field').setText(truncatedDesignation);
 
-    // Set role_field with designation
-    form.getTextField('role_field').setText(formData.designation);
+    // Set role_field with designation and adjust font size
+    form.getTextField('role_field').setText(truncatedDesignation);
+    if (fieldStyles.role_field.bold) {
+      const roleField = form.getTextField('role_field');
+      roleField.defaultUpdateAppearances(helveticaFont);
+      roleField.defaultUpdateAppearances(helveticaFont, fieldStyles.role_field.size);
+    } else {
+      form.getTextField('role_field').defaultUpdateAppearances(helveticaFont, fieldStyles.role_field.size);
+    }
 
     // Set period_field with date range
     form.getTextField('period_field').setText(`${formData.from.toDateString()} to ${formData.to.toDateString()}`);
@@ -61,11 +78,11 @@ const createPDF = async (input, output, formData) => {
     form.getFields().forEach(field => {
       if (field.constructor.name === 'PDFTextField') {
         const defaultAppearance = field.acroField.getDefaultAppearance() ?? '';
-        let newDefaultAppearance = defaultAppearance + `\n/${helveticaFont.name} ${fontSizeRegular} Tf`;
+        const fieldStyle = fieldStyles[field.getName()];
+        let newDefaultAppearance = defaultAppearance + `\n/${helveticaFont.name} ${fieldStyle.size} Tf`;
         
-        // Set bold font size for specific fields
-        if (field.getName() === 'date_field' || field.getName() === 'ref_field' || field.getName() === 'Intern_name' || field.getName() === 'destination_field') {
-          newDefaultAppearance = defaultAppearance + `\n/${helveticaFont.name} ${fontSizeBold} Tf`;
+        if (fieldStyle.bold) {
+          newDefaultAppearance = defaultAppearance + `\n/${helveticaFont.name} ${fieldStyle.size} Tf`;
         }
 
         field.acroField.setDefaultAppearance(newDefaultAppearance);
@@ -75,6 +92,7 @@ const createPDF = async (input, output, formData) => {
     const pdfBytes = await pdfDoc.save();
     await writeFile(output, pdfBytes);
 
+    console.log('PDF created successfully.');
     return output;
   } catch (error) {
     console.error('Error:', error);

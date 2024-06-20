@@ -220,7 +220,7 @@ router.post("/sendMail/:refNo", async (req, res) => {
     // Check if the PDF file exists, if not generate it
     if (!fs.existsSync(pdfPath)) {
       console.log("PDF file does not exist. Generating new PDF.");
-      const templatePath = path.join(__dirname, "../pdf/fill.pdf");
+      const templatePath = path.join(__dirname, "../pdf/finalfill.pdf");
       await generatePDF(templatePath, pdfPath, offerLetter);
     } else {
       console.log("PDF file exists.");
