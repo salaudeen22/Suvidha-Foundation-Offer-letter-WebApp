@@ -1,8 +1,8 @@
 import React, { useContext, useEffect, useState } from "react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faChevronDown, faEye, faEnvelope } from "@fortawesome/free-solid-svg-icons";
 import Navbar from "../components/Navbar";
 import SideBarContext from "../ContextProvider/SidebarContext";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faDownload, faEye, faEnvelope, faEdit } from "@fortawesome/free-solid-svg-icons";
 import Swal from "sweetalert2";
 import FormOverlay from "../components/FormOverlay";
 import { pdfjs } from "react-pdf";
@@ -159,10 +159,6 @@ function OfferletterManagement() {
     )
     .slice(0, numLetters);
 
-  
-
-
- 
   const [currentPage, setCurrentPage] = useState(1);
   const indexOfLastItem = currentPage * numLetters;
   const indexOfFirstItem = indexOfLastItem - numLetters;
@@ -174,24 +170,27 @@ function OfferletterManagement() {
     setCurrentPage(pageNumber);
   };
 
-  console.log(filteredLetters.length);
-
-
   return (
     <div className={`Home ${sidebar ? "sidebar-visible" : "sidebar-hidden"}`}>
       <Navbar />
       <div className="content">
         <div className="controls">
-        <p style={{fontSize:"18px",fontWeight:"500",color:"#2c3135;"}}>Number of recent records <span className="stylish-dropdown-container">
-            <select value={numLetters} onChange={handleNumLettersChange} className="stylish-dropdown">
-              <option value={5}>5</option>
-              <option value={10}>10</option>
-              <option value={20}>20</option>
-              <option value={30}>30</option>
-              <option value={40}>40</option>
-              <option value={50}>50</option>
-            </select>
-           </span></p>
+          <p style={{ fontSize: "18px", fontWeight: "500", color: "#2c3135;" }}>
+            Number of recent records
+           <span className="dropcontent">
+              <select value={numLetters} onChange={handleNumLettersChange} className="stylish-dropdown">
+                <option value={5}>5</option>
+                <option value={10}>10</option>
+                <option value={20}>20</option>
+                <option value={30}>30</option>
+                <option value={40}>40</option>
+                <option value={50}>50</option>
+                <FontAwesomeIcon icon={faChevronDown} className="fa-chevron-down" />
+              </select>
+            
+              </span>
+          
+          </p>
 
           <input
             type="text"
@@ -199,9 +198,7 @@ function OfferletterManagement() {
             onChange={handleSearchChange}
             placeholder="Search offer letters"
           />
-          <button onClick={() => setShowForm(!showForm)}>
-            Create New Offer Letter
-          </button>
+          <button onClick={() => setShowForm(!showForm)}>Create New Offer Letter</button>
         </div>
         {showForm && (
           <div className="overlay">
@@ -210,13 +207,11 @@ function OfferletterManagement() {
         )}
         {editForm && (
           <div className="overlay">
-         
-            <UpdateFormOverlay data={FetchData} onClose={() => setEditForm(false)}  />
+            <UpdateFormOverlay data={FetchData} onClose={() => setEditForm(false)} />
           </div>
         )}
         {showPdfViewer && (
           <div className="overlay">
-           
             <div className="pdf-viewer">
               <div className="pdf-toolbar"></div>
               <iframe title="PDF Viewer" src={pdfUrl} width="100%" height="600px" />
@@ -235,20 +230,18 @@ function OfferletterManagement() {
                   <th>From</th>
                   <th>To</th>
                   <th>UID</th>
-             
                   <th>View File</th>
                   <th>Send Mail</th>
                 </tr>
               </thead>
               <tbody>
-                {filteredLetters.map((letter) => (
+                {currentItems.map((letter) => (
                   <tr key={letter.uid} onClick={() => handleEdit(letter.uid)}>
                     <td>{letter.name}</td>
                     <td>{letter.designation}</td>
                     <td>{formatDate(letter.from)}</td>
                     <td>{formatDate(letter.to)}</td>
                     <td>{letter.uid}</td>
-                  
                     <td onClick={(e) => { e.stopPropagation(); handleView(letter.uid); }}>
                       <FontAwesomeIcon icon={faEye} />
                     </td>

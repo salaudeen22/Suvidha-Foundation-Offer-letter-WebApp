@@ -71,7 +71,7 @@ router.post("/generate/:refNo", async (req, res) => {
     console.log("PDF path:", outputPDF);
 
     await generatePDF(
-      path.join(__dirname, "../pdf/fill.pdf"),
+      path.join(__dirname, "../pdf/fiil2.pdf"),
       outputPDF,
       offerLetter
     );
@@ -163,6 +163,7 @@ router.get("/view/:refNo", async (req, res) => {
   try {
     const refNo = req.params.refNo;
     const offerLetter = await OfferLetter.findOne({ uid: refNo });
+    console.log(offerLetter);
 
     if (!offerLetter) {
       return res.status(404).json({ success: false, message: "Offer letter not found" });
@@ -174,7 +175,7 @@ router.get("/view/:refNo", async (req, res) => {
     // Check if the PDF file exists
     if (!fs.existsSync(pdfPath)) {
       console.log("PDF file does not exist. Generating new PDF.");
-      const templatePath = path.join(__dirname, "../pdf/fill.pdf");
+      const templatePath = path.join(__dirname, "../pdf/finalfill.pdf");
       await generatePDF(templatePath, pdfPath, offerLetter);
     } else {
       console.log("PDF file exists.");
@@ -289,6 +290,7 @@ router.delete("/offerLetter/:uid", async (req, res) => {
   try {
     const uid = req.params.uid;
     const offerLetter = await OfferLetter.findOne({ uid });
+    
 
     if (!offerLetter) {
       return res.status(404).json({ success: false, message: "Offer letter not found" });
