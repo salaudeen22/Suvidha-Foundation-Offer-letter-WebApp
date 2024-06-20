@@ -634,6 +634,7 @@ hr {
   flex-direction: row;
   gap: 20px;
 }
+<<<<<<< HEAD
 /* dropdown for pagination */
 
 .dropcontent {
@@ -694,6 +695,9 @@ hr {
 .pagination button:focus {
   box-shadow: 0 0 5px #35495e; 
 }
+=======
+
+>>>>>>> 4c7bbbb924b933bb40d8c427e86cbfd69bec9aa7
 /* Responsive Design */
 @media (max-width: 768px) {
   .midright {
@@ -950,9 +954,6 @@ table td a:hover {
 /* dropdown for pagination */
 
 .stylish-dropdown {
-  appearance: none;
-  -webkit-appearance: none;
-  -moz-appearance: none;
   background-color: #f0f0f0;  
   border: 1px solid #ccc;  
   border-radius: 4px; 
@@ -979,17 +980,7 @@ table td a:hover {
   display: inline-block;
 }
 
-.stylish-dropdown-container::after {
-  content: '\1F897'; 
-  font-size: 25px; 
-  color: #333;
-  position: absolute;
-  top: 65%;
-  right: 4px; 
-  pointer-events: none;
-  transform: translateY(-50%);
-   
-}
+
 
 
 /* Pagination */
