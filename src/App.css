@@ -368,6 +368,7 @@ ul.submenu {
 .TotalBox {
   font-family: Arial, sans-serif;
   border: 2px solid #ccc;
+  background-color: white;
   border-radius: 5px;
   padding: 20px;
   width: 20vw;
@@ -404,13 +405,96 @@ hr {
 
 /* Styling for midleft and midright cards */
 
-.card {
+
+/* Top left card */
+.midCard
+{
   background-color: #fff;
   border-radius: 8px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   padding: 20px;
-  width: 400px; /* Adjust width as needed */
-  margin: 20px;
+
+ 
+}
+.midCartitle
+{
+  text-align: center;
+  margin-bottom: 10px;
+}
+.offer-table{
+  width: 100%;
+  border-collapse: collapse;
+ 
+}
+
+.offer-table th,
+.offer-table td{
+
+  padding: 8px;
+  text-align: left;
+}
+
+.offer-table th {
+  
+  color: black;
+}
+
+.offer-table tr:nth-child(even) {
+  background-color: #f2f2f2;
+}
+
+.offer-table tr:hover {
+  background-color: #ddd;
+}
+
+.offer-table th{
+  padding-top: 12px;
+  padding-bottom: 12px;
+  text-align: left;
+ 
+  /* color: white; */
+}
+.midCartBottom
+{
+  margin-top: 20px;
+  text-align: center;
+}
+.midright
+{
+  display: flex;
+  flex-direction: row;
+  gap: 20px;
+}
+
+
+
+/* Top Cards */
+
+/* bottom Cards */
+
+.bottom
+{
+  width: 100%;
+  display: flex;
+  align-items: center;
+  margin-top: 20px;
+ 
+}
+
+.card-1,.card-2 {
+  background-color: #fff;
+  border-radius: 8px;
+  width: 50%;
+  margin-left: 20px;
+  height: 60vh;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+ 
+}
+.cardtitle
+{
+  text-align: center;
+  margin-bottom: 10px;
 }
 
 .card-content {
@@ -424,84 +508,7 @@ hr {
 }
 
 
-
-/* Right and Left card Styling End */
-
-/* Table styles */
-.offer-table,
-.pending-table {
-  width: 100%;
-  border-collapse: collapse;
-  margin-top: 20px;
-}
-
-.offer-table th,
-.offer-table td,
-.pending-table th,
-.pending-table td {
-  border: 1px solid #ddd;
-  padding: 8px;
-  text-align: left;
-}
-
-.offer-table th,
-.pending-table th {
-  background-color: #2c3e50;
-  color: #ecf0f1;
-}
-
-.offer-table tr:nth-child(even),
-.pending-table tr:nth-child(even) {
-  background-color: #f2f2f2;
-}
-
-.offer-table tr:hover,
-.pending-table tr:hover {
-  background-color: #ddd;
-}
-
-.offer-table th,
-.pending-table th {
-  padding-top: 12px;
-  padding-bottom: 12px;
-  text-align: left;
-  background-color: #2c3e50;
-  color: white;
-}
-
-.pending-table td a {
-  color: #2c3e50;
-  text-decoration: none;
-}
-
-.pending-table td a:hover {
-  text-decoration: underline;
-  color: #34495e;
-}
-
-.pending-table {
-  border: 2px solid #2c3e50;
-  border-radius: 8px;
-  overflow: hidden;
-}
-
-.pending-table th,
-.pending-table td {
-  border: none;
-  border-bottom: 1px solid #ddd;
-}
-
-.pending-table th {
-  border-bottom: 2px solid #2c3e50;
-}
-/* Table Styling ends */
-
-.bottom
-{
-  display: flex;
-  align-items: center;
- justify-content: space-evenly;
-}
+/* Bottom Card Ends */
 
 /* Main Content End */
 

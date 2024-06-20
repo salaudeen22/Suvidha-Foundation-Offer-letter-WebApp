@@ -5,7 +5,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faDownload, faEye, faEnvelope, faEdit } from "@fortawesome/free-solid-svg-icons";
 import Swal from "sweetalert2";
 import FormOverlay from "../components/FormOverlay";
-import { pdfjs } from "react-pdf"; // Import react-pdf
+import { pdfjs } from "react-pdf";
 import UpdateFormOverlay from "../components/UpdateFormOverlay";
 
 pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.min.js`;
@@ -41,18 +41,17 @@ function OfferletterManagement() {
     const options = { day: "numeric", month: "long" };
     return new Date(dateString).toLocaleDateString("en-US", options);
   }
+
   const handleEdit = async (refNo) => {
     try {
       const response = await fetch(`http://localhost:4000/api/fetchofferLetters/${refNo}`);
       if (!response.ok) {
         throw new Error("Failed to fetch UID data");
       }
-  
+
       const result = await response.json();
-      const data = result.data; 
-      // console.log("Fetched data:", data); // Debugging line
-  
-    
+      const data = result.data;
+
       if (data && data.name && data.email && data.designation && data.from && data.to && data.uid && data.paid) {
         setFetchData({
           name: data.name,
@@ -65,13 +64,13 @@ function OfferletterManagement() {
         });
         setEditForm(true);
       } else {
-        console.error("Fetched data is incomplete:", data); // Debugging line
+        console.error("Fetched data is incomplete:", data);
       }
     } catch (error) {
       console.log("Error:", error);
     }
   };
-  
+
   const handleView = async (refNo) => {
     try {
       const response = await fetch(`http://localhost:4000/api/view/${refNo}`);
@@ -183,10 +182,7 @@ function OfferletterManagement() {
         </div>
         {showForm && (
           <div className="overlay">
-            
-            
-    <FormOverlay onClose={() => setShowForm(false)} />
-
+            <FormOverlay onClose={() => setShowForm(false)} />
           </div>
         )}
         {editForm && (
@@ -211,41 +207,40 @@ function OfferletterManagement() {
 
         <div className="recent-offers">
           <h2>Top 10 Recent Offer Letters</h2>
-          <div><table>
-            <thead>
-              <tr>
-                <th>Name</th>
-                <th>Designation</th>
-                <th>From</th>
-                <th>To</th>
-                <th>UID</th>
-                <th>Update File</th>
-                <th>View File</th>
-                <th>Send Mail</th>
-              </tr>
-            </thead>
-            <tbody>
-
-              {filteredLetters.map((letter) => (
-                <tr key={letter.uid}>
-                  <td>{letter.name}</td>
-                  <td>{letter.designation}</td>
-                  <td>{formatDate(letter.from)}</td>
-                  <td>{formatDate(letter.to)}</td>
-                  <td>{letter.uid}</td>
-                  <td onClick={() => handleEdit(letter.uid)}>
-                    <FontAwesomeIcon icon={faEdit} />
-                  </td>
-                  <td onClick={() => handleView(letter.uid)}>
-                    <FontAwesomeIcon icon={faEye} />
-                  </td>
-                  <td onClick={() => handleSendMail(letter.uid)}>
-                    <FontAwesomeIcon icon={faEnvelope} />
-                  </td>
+          <div>
+            <table>
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>Designation</th>
+                  <th>From</th>
+                  <th>To</th>
+                  <th>UID</th>
+             
+                  <th>View File</th>
+                  <th>Send Mail</th>
                 </tr>
-              ))}
-            </tbody>
-          </table></div>
+              </thead>
+              <tbody>
+                {filteredLetters.map((letter) => (
+                  <tr key={letter.uid} onClick={() => handleEdit(letter.uid)}>
+                    <td>{letter.name}</td>
+                    <td>{letter.designation}</td>
+                    <td>{formatDate(letter.from)}</td>
+                    <td>{formatDate(letter.to)}</td>
+                    <td>{letter.uid}</td>
+                  
+                    <td onClick={(e) => { e.stopPropagation(); handleView(letter.uid); }}>
+                      <FontAwesomeIcon icon={faEye} />
+                    </td>
+                    <td onClick={(e) => { e.stopPropagation(); handleSendMail(letter.uid); }}>
+                      <FontAwesomeIcon icon={faEnvelope} />
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
     </div>

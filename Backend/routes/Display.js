@@ -13,13 +13,16 @@ router.get('/offerLetters', async (req, res) => {
 });
 router.get('/recentofferLetters', async (req, res) => {
   try {
-      const offerLetters = await OfferLetter.find().sort({ createdAt: -1 }).limit(4);
+      // Fetch the most recent 4 offer letters, sorted by the date field in descending order
+      const offerLetters = await OfferLetter.find().sort({ date: -1 }).limit(4);
+      // console.log(offerLetters);
       res.status(200).json({ success: true, data: offerLetters });
   } catch (error) {
       console.error(error);
       res.status(500).json({ success: false, message: 'Internal Server Error' });
   }
 });
+
 
 router.get('/countByDesignation', async (req, res) => {
   try {

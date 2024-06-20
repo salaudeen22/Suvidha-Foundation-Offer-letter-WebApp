@@ -1,4 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import SideBarContext from "../ContextProvider/SidebarContext";
 import axios from "axios";
@@ -41,46 +42,75 @@ function Home() {
       <div className="main-content">
         <div className="top">
           <div className="midleft">
-            <h3>Recent Offer Letters</h3>
-            <table className="offer-table">
-              <thead>
-                <tr>
-                  <th>Sl No</th>
-                  <th>Name</th>
-                  <th>Designation</th>
-                  <th>UID</th>
-                </tr>
-              </thead>
-              <tbody>
-                {recentOfferLetters.map((letter, index) => (
-                  <tr key={index}>
-                    <td>{index + 1}</td>
-                    <td>{letter.name}</td>
-                    <td>{letter.designation}</td>
-                    <td>{letter.uid}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+            <div className="midCard">
+              <div className="midCartitle">
+                <h3>Recent Offer Letters</h3>
+              </div>
+              <hr />
+              <div className="midCardTable">
+                <table className="offer-table">
+                  <thead>
+                    <tr>
+                      <th>Sl No</th>
+                      <th>Name</th>
+                      <th>Designation</th>
+                      <th>UID</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {recentOfferLetters.map((letter, index) => (
+                      <tr key={index}>
+                        <td>{index + 1}</td>
+                        <td>{letter.name}</td>
+                        <td>{letter.designation}</td>
+                        <td>{letter.uid}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+              <div className="midCartBottom">
+                <Link to="/offer-letter-management">View More</Link>
+              </div>
+            </div>
           </div>
-          <div className="TotalBox">
-            <div className="title">Total Accepted Offer Letter </div>
-            <hr />
-            <div className="content">
-              <h1>
-                <span> 10</span>
-              </h1>
+          <div className="midright">
+            <div className="TotalBox">
+              <div className="title">Total Accepted Offer Letter </div>
+              <hr />
+              <div className="content">
+                <h1>
+                  <span> 10</span>
+                </h1>
+              </div>
+            </div>
+            <div className="TotalBox">
+              <div className="title">Total Accepted Offer Letter </div>
+              <hr />
+              <div className="content">
+                <h1>
+                  <span> 10</span>
+                </h1>
+              </div>
             </div>
           </div>
         </div>
 
         <div className="bottom">
-          <div className="card">
+          <div className="card-1">
+            <div className="cardtitle">
+              <h4>Employee Distribution</h4>
+            </div>
+            <hr />
             <div className="card-content">
               <PieGraph data={pieChartData} />
             </div>
           </div>
-          <div className="card">
+          <div className="card-2">
+            <div className="cardtitle">
+              <h4>Internship Role Distribution</h4>
+            </div>
+            <hr />
             <div className="card-content">
               <BarGraph data={barGraphData} />
             </div>
