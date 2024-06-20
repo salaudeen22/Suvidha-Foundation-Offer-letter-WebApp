@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import SideBarContext from "./SidebarContext";
 
 const SideBarContextProvider = ({ children }) => {
-  const [sidebar, setsidebar] = useState(true);
+  const [sidebar, setsidebar] = useState(false);
 
   return (
     <SideBarContext.Provider value={{ sidebar, setsidebar }}>

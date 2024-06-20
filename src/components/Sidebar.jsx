@@ -1,9 +1,9 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useState,useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import SideBarContext from "../ContextProvider/SidebarContext";
 import Swal from "sweetalert2";
 function Sidebar() {
-  const { sidebar } = useContext(SideBarContext);
+  const { sidebar,setsidebar } = useContext(SideBarContext);
   const [openSections, setOpenSections] = useState({
     offerLetterManagement: false,
     templateManagement: false,
@@ -22,6 +22,7 @@ function Sidebar() {
     localStorage.clear();
     navigate("/");
   };
+  
 
   const toggleSection = (section) => {
     setOpenSections((prevState) => ({

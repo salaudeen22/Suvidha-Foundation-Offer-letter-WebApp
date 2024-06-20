@@ -421,8 +421,11 @@ hr {
   text-align: center;
   margin-bottom: 10px;
 }
+
+
 .offer-table{
   width: 100%;
+  overflow-x: scroll;
   border-collapse: collapse;
  
 }
@@ -625,9 +628,31 @@ hr {
 .form-container button:last-child:hover {
   background-color: #c82333; /* Cancel button hover color */
 }
-
+.midright {
+  margin-left: 20px;
+  display: flex;
+  flex-direction: row;
+  gap: 20px;
+}
 /* Responsive Design */
 @media (max-width: 768px) {
+  .midright {
+    margin-left: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+.title {
+  font-size: 20px;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+span h1
+{
+ 
+    font-size: 3vw;
+
+}
   .form-container {
     width: 90%;
     height: 92vh; 
@@ -650,6 +675,58 @@ hr {
 }
 
 @media (max-width: 480px) {
+  .top {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    justify-content: space-between;
+    align-items: center;
+}
+.midright {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+.TotalBox {
+  font-family: Arial, sans-serif;
+  border: 2px solid #ccc;
+  background-color: white;
+  border-radius: 5px;
+  padding: 20px;
+  width: 100%;
+  margin: 0 auto;
+  box-shadow: "1px 6px 20px 0px rgba(0, 0, 0, 0.15)";
+}
+
+.bottom {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 20px;
+}
+
+.card-1, .card-2 {
+  background-color: #fff;
+  border-radius: 8px;
+  width: 100%;
+  margin-left: 20px;
+  height: 60vh;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+}
+.recharts-wrapper {
+  height: 300px !important;
+  width: 240px !important;
+}
+
+.recharts-legend-wrapper {
+  position: absolute;
+  width: auto;
+  height: auto;
+  right: 35px !important;
+  top: 237.5px !important;
+}
   .form-container {
     width: 95%;
     height: 90vh; 
