@@ -5,7 +5,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faDownload, faEye, faEnvelope, faEdit } from "@fortawesome/free-solid-svg-icons";
 import Swal from "sweetalert2";
 import FormOverlay from "../components/FormOverlay";
-import { pdfjs } from "react-pdf"; // Import react-pdf
+import { pdfjs } from "react-pdf";
 import UpdateFormOverlay from "../components/UpdateFormOverlay";
 
 pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.min.js`;
@@ -213,17 +213,13 @@ function OfferletterManagement() {
         )}
         {editForm && (
           <div className="overlay">
-            <span className="close" onClick={() => setEditForm(false)}>
-              &times;
-            </span>
-            <UpdateFormOverlay data={FetchData} />
+         
+            <UpdateFormOverlay data={FetchData} onClose={() => setEditForm(false)}  />
           </div>
         )}
         {showPdfViewer && (
           <div className="overlay">
-            <span className="close" onClick={() => setShowPdfViewer(false)}>
-              &times;
-            </span>
+           
             <div className="pdf-viewer">
               <div className="pdf-toolbar"></div>
               <iframe title="PDF Viewer" src={pdfUrl} width="100%" height="600px" />
@@ -242,19 +238,29 @@ function OfferletterManagement() {
                   <th>From</th>
                   <th>To</th>
                   <th>UID</th>
+<<<<<<< HEAD
                   <th>Update File</th>
+=======
+             
+>>>>>>> 93ced309651a518ba425f0346e5eeee5291ffbde
                   <th>View File</th>
                   <th>Send Mail</th>
                 </tr>
               </thead>
               <tbody>
+<<<<<<< HEAD
                 {currentItems.map((letter) => (
                   <tr key={letter.uid}>
+=======
+                {filteredLetters.map((letter) => (
+                  <tr key={letter.uid} onClick={() => handleEdit(letter.uid)}>
+>>>>>>> 93ced309651a518ba425f0346e5eeee5291ffbde
                     <td>{letter.name}</td>
                     <td>{letter.designation}</td>
                     <td>{formatDate(letter.from)}</td>
                     <td>{formatDate(letter.to)}</td>
                     <td>{letter.uid}</td>
+<<<<<<< HEAD
                     <td onClick={() => handleEdit(letter.uid)}>
                       <FontAwesomeIcon icon={faEdit} />
                     </td>
@@ -262,6 +268,13 @@ function OfferletterManagement() {
                       <FontAwesomeIcon icon={faEye} />
                     </td>
                     <td onClick={() => handleSendMail(letter.uid)}>
+=======
+                  
+                    <td onClick={(e) => { e.stopPropagation(); handleView(letter.uid); }}>
+                      <FontAwesomeIcon icon={faEye} />
+                    </td>
+                    <td onClick={(e) => { e.stopPropagation(); handleSendMail(letter.uid); }}>
+>>>>>>> 93ced309651a518ba425f0346e5eeee5291ffbde
                       <FontAwesomeIcon icon={faEnvelope} />
                     </td>
                   </tr>
@@ -269,6 +282,7 @@ function OfferletterManagement() {
               </tbody>
             </table>
           </div>
+<<<<<<< HEAD
           <div className="pagination">
               {Array.from({ length: totalPages }, (_, index) => (
                 <button
@@ -280,6 +294,8 @@ function OfferletterManagement() {
                 </button>
               ))}
             </div>
+=======
+>>>>>>> 93ced309651a518ba425f0346e5eeee5291ffbde
         </div>
       </div>
     </div>
