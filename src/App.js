@@ -1,7 +1,7 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 import Sidebar from './components/Sidebar';
-import Navbar from './components/Navbar';
+
 import Home from './screen/Home';
 import OfferletterManagement from './screen/OfferletterManagement';
 import SideBarContextProvider from './ContextProvider/SidebarContextProvider';
