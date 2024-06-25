@@ -316,4 +316,78 @@ router.delete("/offerLetter/:uid", async (req, res) => {
   }
 });
 
+router.post("/sendMails", async (req, res) => {
+  let outputPDFs = [];
+  try {
+    const { uids } = req.body;
+
+    for (const uid of uids) {
+      const offerLetter = await OfferLetter.findOne({ uid });
+
+      if (!offerLetter) {
+        console.warn(`Offer letter with UID ${uid} not found`);
+        continue;
+      }
+
+      const pdfPath = resolveFilePath(uid);
+
+      if (!fs.existsSync(pdfPath)) {
+        console.log(`PDF file does not exist for UID ${uid}. Generating new PDF.`);
+        const templatePath = path.join(__dirname, "../pdf/finalfill.pdf");
+        await generatePDF(templatePath, pdfPath, offerLetter);
+      } else {
+        console.log(`PDF file exists for UID ${uid}.`);
+      }
+
+      const mailOptions = {
+        from: process.env.USER_EMAIL,
+        to: offerLetter.email,
+        subject: "Your Offer Letter from Suvidha Foundation",
+        text: `Dear ${offerLetter.name},
+Greetings of the day!
+Congratulations on your offer from Suvidha Foundation! Please find attached the detailed offer letter.
+For the process of acceptance, please revert with the physically signed copy of the Offer Letter within 48 hours to hr@suvidhafoundationedutech.org.
+Upon successful completion of your internship, you will be awarded with a "Certificate of Completion" and, based on your performance, a "Letter of Recommendation".
+We look forward to hearing from you and hope you'll join our team!
+Best regards,
+Sonal Godshelwar
+Human Resource Team
+Suvidha Foundation
+R. No: MH/568/95/Nagpur
+H.No. 1951, W.N.4, Khaperkheda, Saoner, Nagpur
+Email: info@suvidhafoundationedutech.org
+Phone No: +918378042291
+`,
+        attachments: [
+          {
+            filename: "OfferLetter.pdf",
+            path: pdfPath,
+          },
+        ],
+      };
+
+      await sendMail(mailOptions);
+      outputPDFs.push(pdfPath);
+    }
+
+    outputPDFs.forEach((pdfPath) => {
+      if (fs.existsSync(pdfPath)) {
+        fs.unlinkSync(pdfPath);
+        console.log(`Deleted PDF file: ${pdfPath}`);
+      }
+    });
+
+    res.status(200).json({ success: true, message: "Emails sent successfully" });
+  } catch (error) {
+    console.error("Error sending emails:", error);
+    outputPDFs.forEach((pdfPath) => {
+      if (fs.existsSync(pdfPath)) {
+        fs.unlinkSync(pdfPath);
+        console.log(`Deleted PDF file: ${pdfPath}`);
+      }
+    });
+    res.status(500).json({ success: false, message: "Internal Server Error" });
+  }
+});
+
 module.exports = router;

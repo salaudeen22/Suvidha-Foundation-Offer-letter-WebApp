@@ -225,6 +225,7 @@ function OfferletterManagement() {
             <table>
               <thead>
                 <tr>
+              
                   <th>Name</th>
                   <th>Designation</th>
                   <th>From</th>
@@ -237,6 +238,7 @@ function OfferletterManagement() {
               <tbody>
                 {currentItems.map((letter) => (
                   <tr key={letter.uid} onClick={() => handleEdit(letter.uid)}>
+         
                     <td>{letter.name}</td>
                     <td>{letter.designation}</td>
                     <td>{formatDate(letter.from)}</td>

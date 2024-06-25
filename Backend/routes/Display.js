@@ -14,7 +14,7 @@ router.get('/offerLetters', async (req, res) => {
 });
 router.get('/recentofferLetters', async (req, res) => {
   try {
-      // Fetch the most recent 4 offer letters, sorted by the date field in descending order
+      // Fetch the most recent 4 offers̄ letters, sorted by the date field in descending order
       const offerLetters = await OfferLetter.find().sort({ date: -1 }).limit(4);
       // console.log(offerLetters);
       res.status(200).json({ success: true, data: offerLetters });
