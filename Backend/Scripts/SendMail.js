@@ -15,7 +15,7 @@ const transporter = nodemailer.createTransport({
 const sendMail = async (mailOptions) => {
   try {
     await transporter.sendMail(mailOptions);
-    console.log('Email has been sent.');
+    // console.log('Email has been sent.');
   } catch (err) {
     console.log('Some error occurred: ', err);
     throw err;

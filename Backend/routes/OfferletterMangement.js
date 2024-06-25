@@ -68,7 +68,7 @@ router.post("/generate/:refNo", async (req, res) => {
     }
 
     outputPDF = resolveFilePath(refNo);
-    console.log("PDF path:", outputPDF);
+    // console.log("PDF path:", outputPDF);
 
     await generatePDF(
       path.join(__dirname, "../pdf/fiil2.pdf"),
@@ -163,18 +163,18 @@ router.get("/view/:refNo", async (req, res) => {
   try {
     const refNo = req.params.refNo;
     const offerLetter = await OfferLetter.findOne({ uid: refNo });
-    console.log(offerLetter);
+    // console.log(offerLetter);
 
     if (!offerLetter) {
       return res.status(404).json({ success: false, message: "Offer letter not found" });
     }
 
     const pdfPath = resolveFilePath(refNo);
-    console.log("PDF path for viewing:", pdfPath);
+    // console.log("PDF path for viewing:", pdfPath);
 
     // Check if the PDF file exists
     if (!fs.existsSync(pdfPath)) {
-      console.log("PDF file does not exist. Generating new PDF.");
+      // console.log("PDF file does not exist. Generating new PDF.");
       const templatePath = path.join(__dirname, "../pdf/finalfill.pdf");
       await generatePDF(templatePath, pdfPath, offerLetter);
     } else {
@@ -196,7 +196,7 @@ router.get("/view/:refNo", async (req, res) => {
 
    
     fs.unlinkSync(pdfPath);
-    console.log(`Deleted PDF file: ${pdfPath}`);
+    // console.log(`Deleted PDF file: ${pdfPath}`);
   } catch (error) {
     console.error("Error viewing PDF:", error);
     res.status(500).json({ success: false, message: "Internal Server Error" });
@@ -219,7 +219,7 @@ router.post("/sendMail/:refNo", async (req, res) => {
 
     // Check if the PDF file exists, if not generate it
     if (!fs.existsSync(pdfPath)) {
-      console.log("PDF file does not exist. Generating new PDF.");
+      // console.log("PDF file does not exist. Generating new PDF.");
       const templatePath = path.join(__dirname, "../pdf/finalfill.pdf");
       await generatePDF(templatePath, pdfPath, offerLetter);
     } else {
@@ -271,7 +271,7 @@ Phone No: +918378042291
 
    
     fs.unlinkSync(pdfPath);
-    console.log(`Deleted PDF file: ${pdfPath}`);
+    // console.log(`Deleted PDF file: ${pdfPath}`);
 
     res.status(200).json({ success: true, message: "Email sent successfully" });
   } catch (error) {
@@ -281,7 +281,7 @@ Phone No: +918378042291
    
     if (outputPDF && fs.existsSync(outputPDF)) {
       fs.unlinkSync(outputPDF);
-      console.log(`Deleted PDF file: ${outputPDF}`);
+      // console.log(`Deleted PDF file: ${outputPDF}`);
     }
   }
 });
@@ -300,7 +300,7 @@ router.delete("/offerLetter/:uid", async (req, res) => {
     const pdfPath = resolveFilePath(uid);
     if (fs.existsSync(pdfPath)) {
       fs.unlinkSync(pdfPath);
-      console.log(`Deleted PDF file: ${pdfPath}`);
+      // console.log(`Deleted PDF file: ${pdfPath}`);
     }
 
     await OfferLetter.findOneAndDelete({ uid });
@@ -332,7 +332,7 @@ router.post("/sendMails", async (req, res) => {
       const pdfPath = resolveFilePath(uid);
 
       if (!fs.existsSync(pdfPath)) {
-        console.log(`PDF file does not exist for UID ${uid}. Generating new PDF.`);
+        // console.log(`PDF file does not exist for UID ${uid}. Generating new PDF.`);
         const templatePath = path.join(__dirname, "../pdf/finalfill.pdf");
         await generatePDF(templatePath, pdfPath, offerLetter);
       } else {
@@ -373,7 +373,7 @@ Phone No: +918378042291
     outputPDFs.forEach((pdfPath) => {
       if (fs.existsSync(pdfPath)) {
         fs.unlinkSync(pdfPath);
-        console.log(`Deleted PDF file: ${pdfPath}`);
+        // console.log(`Deleted PDF file: ${pdfPath}`);
       }
     });
 
@@ -383,7 +383,7 @@ Phone No: +918378042291
     outputPDFs.forEach((pdfPath) => {
       if (fs.existsSync(pdfPath)) {
         fs.unlinkSync(pdfPath);
-        console.log(`Deleted PDF file: ${pdfPath}`);
+        // console.log(`Deleted PDF file: ${pdfPath}`);
       }
     });
     res.status(500).json({ success: false, message: "Internal Server Error" });

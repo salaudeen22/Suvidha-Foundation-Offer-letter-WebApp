@@ -85,7 +85,7 @@ router.post(
           .json({ errors: "Try logging in with correct credentials" });
       }
       const data = { user: { id: userdata.id } };
-      console.log(userdata.role);
+      // console.log(userdata.role);
 
       const authtoken = jwt.sign(data, jwtsecret, { expiresIn: "10d" });
 const username=userdata.name;
