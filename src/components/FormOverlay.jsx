@@ -22,7 +22,7 @@ function FormOverlay({ onClose }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await fetch(`http://localhost:4000/api/offerLetter`, {
+      const response = await fetch(`https://suivdhabackend-1.onrender.com/api/offerLetter`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

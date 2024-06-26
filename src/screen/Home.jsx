@@ -19,16 +19,16 @@ function Home() {
     async function fetchData() {
       try {
         const responseRecent = await axios.get(
-          "http://localhost:4000/api/recentofferLetters"
+          "https://suivdhabackend-1.onrender.com/api/recentofferLetters"
         );
         setRecentOfferLetters(responseRecent.data.data);
 
         const responsePieChart = await axios.get(
-          "http://localhost:4000/api/countByDesignation"
+          "https://suivdhabackend-1.onrender.com/api/countByDesignation"
         );
         setPieChartData(responsePieChart.data.data);
         const responseBarGraph = await axios.get(
-          "http://localhost:4000/api/bargraphdata"
+          "https://suivdhabackend-1.onrender.com/api/bargraphdata"
         );
         setBarGraphData(responseBarGraph.data.data);
       } catch (error) {
@@ -42,7 +42,7 @@ function Home() {
   const fetchTotalOfferLetters = async () => {
     try {
       const response = await fetch(
-        "http://localhost:4000/api/totalOfferLetters"
+        "https://suivdhabackend-1.onrender.com/api/totalOfferLetters"
       );
       if (!response.ok) {
         throw new Error("Failed to fetch total offer letters");
@@ -52,7 +52,7 @@ function Home() {
       // console.log(totalOfferLetters);
       // Fetch current working offer letters count
       const currentWorkingResponse = await fetch(
-        "http://localhost:4000/api/currentWorkingOfferLetters"
+        "https://suivdhabackend-1.onrender.com/api/currentWorkingOfferLetters"
       );
       if (!currentWorkingResponse.ok) {
         throw new Error("Failed to fetch current working offer letters");

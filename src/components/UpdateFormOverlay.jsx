@@ -37,7 +37,7 @@ function UpdateFormOverlay({ data, onClose }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await fetch(`http://localhost:4000/api/updateofferLetter/${formData.uid}`, {
+      const response = await fetch(`https://suivdhabackend-1.onrender.com/api/updateofferLetter/${formData.uid}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -86,7 +86,7 @@ function UpdateFormOverlay({ data, onClose }) {
     }).then(async (result) => {
       if (result.isConfirmed) {
         try {
-          const response = await fetch(`http://localhost:4000/api/offerLetter/${formData.uid}`, {
+          const response = await fetch(`https://suivdhabackend-1.onrender.com/api/offerLetter/${formData.uid}`, {
             method: "DELETE",
           });
           const responseData = await response.json();

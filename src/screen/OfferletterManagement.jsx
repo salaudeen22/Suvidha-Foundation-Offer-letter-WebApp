@@ -44,7 +44,7 @@ function OfferletterManagement() {
 
   const handleEdit = async (refNo) => {
     try {
-      const response = await fetch(`http://localhost:4000/api/fetchofferLetters/${refNo}`);
+      const response = await fetch(`https://suivdhabackend-1.onrender.com/api/fetchofferLetters/${refNo}`);
       if (!response.ok) {
         throw new Error("Failed to fetch UID data");
       }
@@ -73,7 +73,7 @@ function OfferletterManagement() {
 
   const handleView = async (refNo) => {
     try {
-      const response = await fetch(`http://localhost:4000/api/view/${refNo}`);
+      const response = await fetch(`https://suivdhabackend-1.onrender.com/api/view/${refNo}`);
       if (!response.ok) {
         throw new Error(`Failed to fetch PDF for UID: ${refNo}`);
       }
@@ -94,7 +94,7 @@ function OfferletterManagement() {
 
   const fetchData = async () => {
     try {
-      const response = await fetch("http://localhost:4000/api/offerLetters");
+      const response = await fetch("https://suivdhabackend-1.onrender.com/api/offerLetters");
       if (!response.ok) {
         throw new Error("Network response was not ok");
       }
@@ -121,7 +121,7 @@ function OfferletterManagement() {
     }).then(async (result) => {
       if (result.isConfirmed) {
         try {
-          const response = await fetch(`http://localhost:4000/api/sendMail/${uid}`, {
+          const response = await fetch(`https://suivdhabackend-1.onrender.com/api/sendMail/${uid}`, {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
